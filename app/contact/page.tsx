@@ -12,6 +12,16 @@ import {
     CheckCircle
 } from 'lucide-react';
 
+interface PageAsset {
+    _id: string;
+    key: string;
+    imageUrl: string;
+    alt?: string;
+    altAr?: string;
+    text?: string;
+    textAr?: string;
+}
+
 const Contact = () => {
     const [formData, setFormData] = useState({
         name: '',
@@ -123,20 +133,33 @@ const Contact = () => {
         }
     ];
 
+
+
     const [banner, setBanner] = useState<string>('');
+    const [faqAssets, setFaqAssets] = useState<PageAsset[]>([]);
 
     useEffect(() => {
-        const fetchBanner = async () => {
+        const fetchData = async () => {
             try {
-                const res = await fetch('/api/banners');
-                const data = await res.json();
-                const contactBanner = data.find((b: any) => b.page === 'contact');
+                // Fetch Banner
+                const bannerRes = await fetch('/api/banners');
+                const bannerData = await bannerRes.json();
+                const contactBanner = bannerData.find((b: any) => b.page === 'contact');
                 if (contactBanner) setBanner(contactBanner.image);
+
+                // Fetch FAQs
+                const faqRes = await fetch('/api/page-assets?page=contact&section=faq');
+                if (faqRes.ok) {
+                    const faqData = await faqRes.json();
+                    if (faqData.length > 0) {
+                        setFaqAssets(faqData);
+                    }
+                }
             } catch (error) {
-                console.error('Failed to fetch banner:', error);
+                console.error('Failed to fetch data:', error);
             }
         };
-        fetchBanner();
+        fetchData();
     }, []);
 
     // Helper to determine image source
@@ -427,12 +450,21 @@ const Contact = () => {
                     </div>
 
                     <div className="space-y-6">
-                        {faqs.map((faq, index) => (
-                            <div key={index} className="bg-gray-50 rounded-lg p-6">
-                                <h3 className="text-lg font-bold text-gray-900 mb-3">{faq.question}</h3>
-                                <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                            </div>
-                        ))}
+                        {faqAssets.length > 0 ? (
+                            faqAssets.map((faq) => (
+                                <div key={faq._id} className="bg-gray-50 rounded-lg p-6">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-3">{faq.altAr}</h3>
+                                    <p className="text-gray-600 leading-relaxed">{faq.textAr}</p>
+                                </div>
+                            ))
+                        ) : (
+                            faqs.map((faq, index) => (
+                                <div key={index} className="bg-gray-50 rounded-lg p-6">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-3">{faq.question}</h3>
+                                    <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
             </section>

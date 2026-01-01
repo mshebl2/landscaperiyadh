@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowDown, Leaf, Phone, MessageCircle, MapPin, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { ArrowDown, Leaf, Phone, MessageCircle, MapPin, ChevronLeft, ChevronRight, Loader2, Users, Star, ShieldCheck, Clock } from 'lucide-react';
 
 interface HomeSlide {
   _id: string;
@@ -28,6 +28,16 @@ interface Project {
   title: string;
   titleAr: string;
   image: string;
+}
+
+interface PageAsset {
+  _id: string;
+  key: string;
+  imageUrl: string;
+  alt?: string;
+  altAr?: string;
+  text?: string;
+  textAr?: string;
 }
 
 // Default slides (fallback if no data in DB)
@@ -89,6 +99,7 @@ const Home = () => {
   const [slides, setSlides] = useState<HomeSlide[]>(defaultSlides);
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [whyChooseUsAssets, setWhyChooseUsAssets] = useState<PageAsset[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Helper function to get image URL (supports GridFS)
@@ -109,10 +120,11 @@ const Home = () => {
         setLoading(true);
 
         // Fetch all data in parallel
-        const [slidesRes, servicesRes, projectsRes] = await Promise.all([
+        const [slidesRes, servicesRes, projectsRes, whyChooseUsRes] = await Promise.all([
           fetch('/api/home-slides?active=true').catch(() => null),
           fetch('/api/services?featured=true').catch(() => null),
-          fetch('/api/projects?featured=true').catch(() => null)
+          fetch('/api/projects?featured=true').catch(() => null),
+          fetch('/api/page-assets?page=home&section=why-choose-us').catch(() => null)
         ]);
 
         // Handle slides
@@ -133,6 +145,11 @@ const Home = () => {
         if (projectsRes?.ok) {
           const projectsData = await projectsRes.json();
           setProjects(projectsData.slice(0, 3)); // Get top 3 featured projects
+        }
+
+        // Handle Why Choose Us assets
+        if (whyChooseUsRes?.ok) {
+          setWhyChooseUsAssets(await whyChooseUsRes.json());
         }
 
       } catch (error) {
@@ -478,19 +495,46 @@ const Home = () => {
             </p>
           </div>
 
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {whyChooseUs.map((reason, index) => (
-              <div
-                key={index}
-                className="text-center p-6 bg-white rounded-xl hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Leaf className="w-8 h-8 text-green-600" />
+            {whyChooseUsAssets.length > 0 ? (
+              whyChooseUsAssets.map((asset) => {
+                const iconMap: { [key: string]: any } = {
+                  'leaf': Leaf,
+                  'users': Users,
+                  'star': Star,
+                  'shield-check': ShieldCheck,
+                  'clock': Clock,
+                };
+                const IconComponent = iconMap[asset.imageUrl] || Leaf;
+
+                return (
+                  <div
+                    key={asset._id}
+                    className="text-center p-6 bg-white rounded-xl hover:shadow-lg transition-shadow duration-300"
+                  >
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="w-8 h-8 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{asset.altAr}</h3>
+                    <p className="text-gray-600 text-sm">{asset.textAr}</p>
+                  </div>
+                );
+              })
+            ) : (
+              whyChooseUs.map((reason, index) => (
+                <div
+                  key={index}
+                  className="text-center p-6 bg-white rounded-xl hover:shadow-lg transition-shadow duration-300"
+                >
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Leaf className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{reason.title}</h3>
+                  <p className="text-gray-600 text-sm">{reason.description}</p>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{reason.title}</h3>
-                <p className="text-gray-600 text-sm">{reason.description}</p>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <div className="text-center">

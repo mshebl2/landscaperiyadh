@@ -104,6 +104,96 @@ const samplePageAssets = [
         altAr: 'مشرف التنفيذ',
         text: 'Mohamed Ali',
         textAr: 'محمد علي'
+    },
+    // Home Page - Why Choose Us
+    {
+        page: 'home',
+        section: 'why-choose-us',
+        key: 'experience',
+        imageUrl: 'leaf',
+        alt: '15+ Years Experience',
+        altAr: 'خبرة 15+ سنة',
+        text: 'Leaders in landscaping in Riyadh',
+        textAr: 'رواد في مجال تنسيق الحدائق بالرياض',
+        order: 0
+    },
+    {
+        page: 'home',
+        section: 'why-choose-us',
+        key: 'team',
+        imageUrl: 'users',
+        alt: 'Specialized Team',
+        altAr: 'فريق متخصص',
+        text: 'Engineers and experts in design and execution',
+        textAr: 'مهندسون وخبراء في التصميم والتنفيذ',
+        order: 1
+    },
+    {
+        page: 'home',
+        section: 'why-choose-us',
+        key: 'quality',
+        imageUrl: 'star',
+        alt: 'Exceptional Quality',
+        altAr: 'جودة استثنائية',
+        text: 'Best international materials and techniques',
+        textAr: 'أفضل المواد والتقنيات العالمية',
+        order: 2
+    },
+    {
+        page: 'home',
+        section: 'why-choose-us',
+        key: 'guarantee',
+        imageUrl: 'shield-check',
+        alt: 'Comprehensive Warranty',
+        altAr: 'ضمان شامل',
+        text: 'Warranty on all works and services',
+        textAr: 'ضمان على جميع الأعمال والخدمات',
+        order: 3
+    },
+    // Contact Page - FAQ
+    {
+        page: 'contact',
+        section: 'faq',
+        key: 'duration',
+        imageUrl: 'clock',
+        alt: 'How long does the project take?',
+        altAr: 'كم تستغرق مدة تنفيذ المشروع؟',
+        text: 'Duration varies by project size, from a week for small projects to several months for large ones.',
+        textAr: 'تختلف مدة التنفيذ حسب حجم المشروع، من أسبوع للمشاريع الصغيرة إلى عدة أشهر للمشاريع الكبيرة.',
+        order: 0
+    },
+    {
+        page: 'contact',
+        section: 'faq',
+        key: 'warranty',
+        imageUrl: 'shield-check',
+        alt: 'Do you provide warranty?',
+        altAr: 'هل تقدمون ضمان على الأعمال؟',
+        text: 'Yes, we provide a comprehensive warranty on all our works for a full year.',
+        textAr: 'نعم، نقدم ضمان شامل على جميع أعمالنا لمدة سنة كاملة.',
+        order: 1
+    },
+    {
+        page: 'contact',
+        section: 'faq',
+        key: 'consultation',
+        imageUrl: 'message-circle',
+        alt: 'Is consultation free?',
+        altAr: 'هل الاستشارة مجانية؟',
+        text: 'Yes, we provide free consultation and site visit to evaluate the project.',
+        textAr: 'نعم، نقدم استشارة مجانية وزيارة الموقع لتقييم المشروع.',
+        order: 2
+    },
+    {
+        page: 'contact',
+        section: 'faq',
+        key: 'location',
+        imageUrl: 'map-pin',
+        alt: 'Do you work outside Riyadh?',
+        altAr: 'هل تعملون خارج الرياض؟',
+        text: 'Yes, we serve all regions of Saudi Arabia.',
+        textAr: 'نعم، نخدم جميع مناطق المملكة العربية السعودية.',
+        order: 3
     }
 ];
 
