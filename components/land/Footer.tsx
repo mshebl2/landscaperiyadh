@@ -20,7 +20,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 text-white border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Company Info */}
@@ -29,11 +29,11 @@ const Footer = () => {
               <img
                 src="/logo-landscape-masters.png copy.jpg"
                 alt="لاندسكيب ماسترز بالرياض"
-                className="h-10 w-auto ml-3"
+                className="h-10 w-auto ml-3 opacity-90 hover:opacity-100 transition-opacity"
               />
-              <h3 className="text-xl font-bold">لاندسكيب ماسترز بالرياض</h3>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">لاندسكيب ماسترز بالرياض</h3>
             </div>
-            <p className="text-gray-300 mb-6 leading-relaxed">
+            <p className="text-gray-400 mb-6 leading-relaxed font-light">
               شركة رائدة في تصميم وتنسيق الحدائق في المملكة العربية السعودية،
               نحول أحلامك إلى حدائق خضراء مبهرة بأعلى معايير الجودة والإبداع.
             </p>
@@ -44,7 +44,7 @@ const Footer = () => {
                 href="https://www.facebook.com/profile.php?id=100081155241953"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-blue-600 hover:bg-blue-700 p-2 rounded-full transition-colors duration-200"
+                className="bg-gray-800 hover:bg-[#1877F2] p-2.5 rounded-full transition-all duration-300 text-gray-400 hover:text-white"
               >
                 <Facebook className="w-5 h-5" />
               </a>
@@ -52,7 +52,7 @@ const Footer = () => {
                 href="https://www.instagram.com/landscape_masters_riyadh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-pink-600 hover:bg-pink-700 p-2 rounded-full transition-colors duration-200"
+                className="bg-gray-800 hover:bg-[#E4405F] p-2.5 rounded-full transition-all duration-300 text-gray-400 hover:text-white"
               >
                 <Instagram className="w-5 h-5" />
               </a>
@@ -61,13 +61,13 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">روابط سريعة</h4>
+            <h4 className="text-lg font-semibold mb-6 text-gray-100 border-b border-gray-800 pb-2 inline-block">روابط سريعة</h4>
             <ul className="space-y-3">
               {quickLinks.map((link, index) => (
                 <li key={index}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-green-400 transition-colors duration-200"
+                    className="text-gray-400 hover:text-[#0d9488] transition-all duration-200 hover:translate-x-[-4px] inline-block"
                   >
                     {link.name}
                   </Link>
@@ -78,48 +78,56 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">معلومات التواصل</h4>
+            <h4 className="text-lg font-semibold mb-6 text-gray-100 border-b border-gray-800 pb-2 inline-block">معلومات التواصل</h4>
             <div className="space-y-4">
-              <div className="flex items-center">
-                <Phone className="w-5 h-5 text-green-500 ml-3 flex-shrink-0" />
-                <a href="tel:+966534309221" className="text-gray-300 hover:text-green-400 transition-colors duration-200">
+              <div className="flex items-center group">
+                <div className="bg-gray-800 p-2 rounded-lg ml-3 group-hover:bg-[#0d9488]/20 transition-colors">
+                  <Phone className="w-5 h-5 text-[#0d9488] flex-shrink-0" />
+                </div>
+                <a href="tel:+966534309221" className="text-gray-400 hover:text-white transition-colors duration-200" dir="ltr">
                   +966 53 430 9221
                 </a>
               </div>
 
-              <div className="flex items-center">
-                <MessageCircle className="w-5 h-5 text-green-500 ml-3 flex-shrink-0" />
-                <a href="https://wa.me/966534309221" className="text-gray-300 hover:text-green-400 transition-colors duration-200">
+              <div className="flex items-center group">
+                <div className="bg-gray-800 p-2 rounded-lg ml-3 group-hover:bg-[#0d9488]/20 transition-colors">
+                  <MessageCircle className="w-5 h-5 text-[#0d9488] flex-shrink-0" />
+                </div>
+                <a href="https://wa.me/966534309221" className="text-gray-400 hover:text-white transition-colors duration-200">
                   واتساب
                 </a>
               </div>
 
-              <div className="flex items-center">
-                <Mail className="w-5 h-5 text-green-500 ml-3 flex-shrink-0" />
-                <a href="mailto:shazash09@gmail.com" className="text-gray-300 hover:text-green-400 transition-colors duration-200">
+              <div className="flex items-center group">
+                <div className="bg-gray-800 p-2 rounded-lg ml-3 group-hover:bg-[#0d9488]/20 transition-colors">
+                  <Mail className="w-5 h-5 text-[#0d9488] flex-shrink-0" />
+                </div>
+                <a href="mailto:shazash09@gmail.com" className="text-gray-400 hover:text-white transition-colors duration-200" dir="ltr">
                   shazash09@gmail.com
                 </a>
               </div>
 
-              <div className="flex items-start">
-                <MapPin className="w-5 h-5 text-green-500 ml-3 flex-shrink-0 mt-1" />
-                <span className="text-gray-300">
+              <div className="flex items-start group">
+                <div className="bg-gray-800 p-2 rounded-lg ml-3 group-hover:bg-[#0d9488]/20 transition-colors mt-1">
+                  <MapPin className="w-5 h-5 text-[#0d9488] flex-shrink-0" />
+                </div>
+                <span className="text-gray-400 mt-2">
                   الرياض، المملكة العربية السعودية
                 </span>
               </div>
             </div>
 
             {/* Quick Contact Buttons */}
-            <div className="mt-6 space-y-2">
+            <div className="mt-8 space-y-3">
               <a
                 href="tel:+966534309221"
-                className="block bg-green-600 hover:bg-green-700 text-center py-2 px-4 rounded-lg transition-colors duration-200 text-sm font-medium"
+                className="block bg-[#0d9488] hover:bg-[#0f766e] text-white text-center py-3 px-4 rounded-xl transition-all duration-200 text-sm font-bold shadow-lg hover:shadow-teal-900/50 hover:-translate-y-0.5"
               >
                 اتصل الآن
               </a>
               <a
                 href="https://wa.me/966534309221"
-                className="block bg-green-500 hover:bg-green-600 text-center py-2 px-4 rounded-lg transition-colors duration-200 text-sm font-medium"
+                className="block bg-gray-800 hover:bg-gray-700 text-white text-center py-3 px-4 rounded-xl transition-all duration-200 text-sm font-bold border border-gray-700 hover:border-gray-600"
               >
                 واتساب
               </a>
@@ -128,29 +136,29 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm mb-4 md:mb-0">
+        <div className="border-t border-gray-800 mt-16 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-gray-500 text-sm text-center md:text-right">
               جميع الحقوق محفوظة لدى لاندسكيب ماسترز بالرياض © 2025.
             </p>
             <div className="flex space-x-6 space-x-reverse text-sm">
-              <a href="#" className="text-gray-400 hover:text-green-400 transition-colors duration-200">
+              <a href="#" className="text-gray-500 hover:text-[#0d9488] transition-colors duration-200">
                 سياسة الخصوصية
               </a>
-              <a href="#" className="text-gray-400 hover:text-green-400 transition-colors duration-200">
+              <a href="#" className="text-gray-500 hover:text-[#0d9488] transition-colors duration-200">
                 شروط الاستخدام
               </a>
             </div>
           </div>
 
-          <div className="mt-4 text-center">
-            <p className="text-gray-500 text-xs">
+          <div className="mt-8 text-center">
+            <p className="text-gray-600 text-xs">
               تم التصميم والأرشفة بواسطة
               <a
                 href="https://wa.me/966541430116/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-green-400 hover:underline mx-1"
+                className="text-[#0d9488] hover:underline mx-1 font-medium"
               >
                 مؤسسة رواد الرقمية
               </a>

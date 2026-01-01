@@ -36,6 +36,8 @@ const translations: Record<string, string> = {
     'admin.tabs.blogs': 'المدونة',
     'admin.tabs.seo-config': 'إعدادات SEO',
     'admin.tabs.link-mappings': 'الروابط الداخلية',
+    'admin.tabs.page-assets': 'محتوى الصفحات',
+    'admin.tabs.home-slides': 'شرائح الرئيسية',
 
     // Login (though replaced, keeping for safety)
     'admin.login.title': 'تسجيل الدخول',

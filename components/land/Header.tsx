@@ -24,15 +24,15 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-lg fixed w-full top-0 z-50">
+    <header className="bg-white/95 backdrop-blur-md shadow-sm fixed w-full top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center group">
             <img
               src="/logo-landscape-masters.png copy.jpg"
               alt="لاندسكيب ماسترز بالرياض"
-              className="h-12 w-auto ml-3"
+              className="h-12 w-auto ml-3 transform group-hover:scale-105 transition-transform duration-300"
             />
           </Link>
 
@@ -42,12 +42,13 @@ const Header = () => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${isActive(item.href)
-                    ? 'text-green-600 border-b-2 border-green-600'
-                    : 'text-gray-700 hover:text-green-600'
+                className={`px-3 py-2 text-sm font-semibold transition-all duration-200 relative group ${isActive(item.href)
+                  ? 'text-[#0d9488]'
+                  : 'text-gray-600 hover:text-[#0d9488]'
                   }`}
               >
                 {item.name}
+                <span className={`absolute bottom-0 right-0 h-0.5 bg-[#0d9488] transition-all duration-300 ${isActive(item.href) ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
             ))}
           </nav>
@@ -56,7 +57,7 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-green-600 focus:outline-none focus:text-green-600"
+              className="text-gray-700 hover:text-[#0d9488] focus:outline-none transition-colors"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -66,14 +67,14 @@ const Header = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-100 shadow-inner">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`block px-3 py-2 text-base font-medium ${isActive(item.href)
-                      ? 'text-green-600 bg-green-50'
-                      : 'text-gray-700 hover:text-green-600'
+                  className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${isActive(item.href)
+                    ? 'text-[#0d9488] bg-[#0d9488]/5 border-r-4 border-[#0d9488]'
+                    : 'text-gray-600 hover:text-[#0d9488] hover:bg-gray-50'
                     }`}
                   onClick={() => setIsMenuOpen(false)}
                 >

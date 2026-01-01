@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowDown, Leaf, Phone, MessageCircle, MapPin, ChevronLeft, ChevronRight, Loader2, Users, Star, ShieldCheck, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface HomeSlide {
   _id: string;
@@ -234,38 +235,43 @@ const Home = () => {
             <Leaf className="w-16 h-16 text-green-400 animate-pulse" />
           </div>
 
-          <div className="mb-8">
-            <h1 className="text-5xl md:text-7xl font-bold mb-4 leading-tight">
+          <div className="mb-8 p-4 bg-black/20 backdrop-blur-sm rounded-3xl inline-block border border-white/10">
+            <h1 className="text-5xl md:text-8xl font-black mb-4 leading-tight drop-shadow-xl bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">
               لاندسكيب ماسترز
             </h1>
-            <p className="text-2xl md:text-3xl text-green-300 font-semibold">
+            <p className="text-3xl md:text-4xl text-[#FFDD00] font-bold tracking-wide drop-shadow-md">
               الرياض
             </p>
           </div>
 
-          <p className="text-2xl md:text-3xl mb-8 text-gray-200 leading-relaxed font-semibold">
-            نحول أحلامك إلى واحات خضراء مبهرة
+          <p className="text-2xl md:text-4xl mb-8 text-white leading-relaxed font-bold drop-shadow-lg">
+            نحول أحلامك إلى <span className="text-[#4ade80]">واحات خضراء</span> مبهرة
           </p>
 
           {/* Current Slide Info */}
-          <p className="text-xl md:text-2xl mb-8 text-green-300 font-semibold">
+          <motion.p
+            key={slides[currentSlide]?._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-xl md:text-2xl mb-8 text-[#FFDD00] font-medium bg-black/40 px-6 py-2 rounded-full inline-block backdrop-blur-md border border-[#FFDD00]/20"
+          >
             {slides[currentSlide]?.subtitleAr}
-          </p>
+          </motion.p>
 
-          <p className="text-lg md:text-xl mb-12 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl mb-12 text-gray-100 max-w-2xl mx-auto leading-relaxed font-light drop-shadow-md">
             الشركة الرائدة في تصميم وتنسيق الحدائق الفاخرة بالرياض، نبدع حلولاً مبتكرة تجمع بين الفخامة والجمال الطبيعي
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/services"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="bg-[#0d9488] hover:bg-[#0f766e] text-white px-8 py-4 rounded-xl text-lg font-bold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#0d9488]/40 ring-4 ring-transparent hover:ring-[#0d9488]/20"
             >
               اكتشف خدماتنا
             </Link>
             <Link
               href="/portfolio"
-              className="bg-transparent border-2 border-white hover:bg-white hover:text-gray-900 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+              className="bg-white/10 backdrop-blur-md border hover:border-white hover:bg-white hover:text-gray-900 text-white px-8 py-4 rounded-xl text-lg font-bold transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               معرض الأعمال
             </Link>
@@ -278,113 +284,122 @@ const Home = () => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-white' : 'bg-white/50 hover:bg-white/70'
+              className={`w-3 h-3 rounded-full transition-all duration-500 ${index === currentSlide ? 'w-8 bg-[#FFDD00]' : 'bg-white/50 hover:bg-white'
                 }`}
             />
           ))}
         </div>
 
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="w-8 h-8 text-white" />
+          <ArrowDown className="w-8 h-8 text-white drop-shadow-lg" />
         </div>
       </section>
 
       {/* Services Preview */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">أهم خدماتنا</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              نقدم مجموعة شاملة من الخدمات المتخصصة في تصميم وتنسيق الحدائق
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-display">أهم خدماتنا</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
+              نقدم مجموعة شاملة من الخدمات المتخصصة في تصميم وتنسيق الحدائق بأعلى معايير الجودة
             </p>
           </div>
 
           {loading ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="w-12 h-12 text-green-600 animate-spin" />
+              <Loader2 className="w-12 h-12 text-[#0d9488] animate-spin" />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {services.length > 0 ? (
                 services.map((service) => (
-                  <div
+                  <motion.div
                     key={service._id}
-                    className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100"
                   >
-                    <div className="relative overflow-hidden">
+                    <div className="relative overflow-hidden h-64">
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
                       <img
                         src={getImageUrl(service.image)}
                         alt={service.titleAr}
-                        className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1105019/pexels-photo-1105019.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop';
                         }}
                       />
                     </div>
 
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">{service.titleAr}</h3>
-                      <p className="text-gray-600 leading-relaxed mb-4 line-clamp-2">{service.descriptionAr}</p>
+                    <div className="p-8">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0d9488] transition-colors">{service.titleAr}</h3>
+                      <p className="text-gray-500 leading-relaxed mb-6 line-clamp-3">{service.descriptionAr}</p>
                       <Link
                         href="/services"
-                        className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold transition-colors duration-200"
+                        className="inline-flex items-center text-[#0d9488] hover:text-[#0f766e] font-bold transition-all duration-200 group-hover:gap-2"
                       >
                         اطلب الخدمة
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                       </Link>
                     </div>
-                  </div>
+                  </motion.div>
                 ))
               ) : (
                 // Fallback static services if none in DB
                 <>
-                  <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div className="relative overflow-hidden">
-                      <img src="/11.jpg" alt="تصميم حدائق" className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100">
+                    <div className="relative overflow-hidden h-64">
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
+                      <img src="/11.jpg" alt="تصميم حدائق" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">تصميم وتنسيق الحدائق الفاخرة</h3>
-                      <p className="text-gray-600 leading-relaxed mb-4">تصاميم مبتكرة وعصرية تحول مساحتك إلى واحة خضراء مبهرة</p>
-                      <Link href="/services" className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold">
+                    <div className="p-8">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0d9488] transition-colors">تصميم وتنسيق الحدائق الفاخرة</h3>
+                      <p className="text-gray-500 leading-relaxed mb-6">تصاميم مبتكرة وعصرية تحول مساحتك إلى واحة خضراء مبهرة باستخدام أحدث التقنيات</p>
+                      <Link href="/services" className="inline-flex items-center text-[#0d9488] hover:text-[#0f766e] font-bold transition-all duration-200 group-hover:gap-2">
                         اطلب الخدمة
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                       </Link>
                     </div>
-                  </div>
-                  <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div className="relative overflow-hidden">
-                      <img src="/IMG-20250930-WA0102.jpg" alt="جلسات خارجية" className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </motion.div>
+
+                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100">
+                    <div className="relative overflow-hidden h-64">
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
+                      <img src="/IMG-20250930-WA0102.jpg" alt="جلسات خارجية" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">جلسات خارجية وغرف زجاجية</h3>
-                      <p className="text-gray-600 leading-relaxed mb-4">مساحات استرخاء فاخرة مع أثاث عصري وغرف زجاجية</p>
-                      <Link href="/services" className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold">
+                    <div className="p-8">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0d9488] transition-colors">جلسات خارجية وغرف زجاجية</h3>
+                      <p className="text-gray-500 leading-relaxed mb-6">مساحات استرخاء فاخرة مع أثاث عصري وغرف زجاجية تمنحك إطلالة بانورامية</p>
+                      <Link href="/services" className="inline-flex items-center text-[#0d9488] hover:text-[#0f766e] font-bold transition-all duration-200 group-hover:gap-2">
                         اطلب الخدمة
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                       </Link>
                     </div>
-                  </div>
-                  <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div className="relative overflow-hidden">
-                      <img src="/10.jpg" alt="شلالات ونوافير" className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </motion.div>
+
+                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100">
+                    <div className="relative overflow-hidden h-64">
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
+                      <img src="/10.jpg" alt="شلالات ونوافير" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">شلالات ونوافير فاخرة</h3>
-                      <p className="text-gray-600 leading-relaxed mb-4">عناصر مائية مذهلة تضيف لمسة من الفخامة والهدوء</p>
-                      <Link href="/services" className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold">
+                    <div className="p-8">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0d9488] transition-colors">شلالات ونوافير فاخرة</h3>
+                      <p className="text-gray-500 leading-relaxed mb-6">عناصر مائية مذهلة تضيف لمسة من الفخامة والهدوء إلى حديقتك المنزلية</p>
+                      <Link href="/services" className="inline-flex items-center text-[#0d9488] hover:text-[#0f766e] font-bold transition-all duration-200 group-hover:gap-2">
                         اطلب الخدمة
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                       </Link>
                     </div>
-                  </div>
+                  </motion.div>
                 </>
               )}
             </div>
@@ -393,7 +408,7 @@ const Home = () => {
           <div className="text-center">
             <Link
               href="/services"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105"
+              className="bg-[#0d9488] hover:bg-[#0f766e] text-white px-8 py-3 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
               عرض جميع الخدمات
             </Link>
@@ -413,7 +428,7 @@ const Home = () => {
 
           {loading ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="w-12 h-12 text-green-600 animate-spin" />
+              <Loader2 className="w-12 h-12 text-[#0d9488] animate-spin" />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -440,7 +455,7 @@ const Home = () => {
                   </div>
                 ))
               ) : (
-                // Fallback static projects if none in DB
+                // Fallback static projects
                 <>
                   <div className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                     <div className="relative overflow-hidden">
@@ -477,7 +492,7 @@ const Home = () => {
           <div className="text-center">
             <Link
               href="/portfolio"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105"
+              className="bg-[#0d9488] hover:bg-[#0f766e] text-white px-8 py-3 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
               عرض معرض الأعمال كاملاً
             </Link>
@@ -513,8 +528,8 @@ const Home = () => {
                     key={asset._id}
                     className="text-center p-6 bg-white rounded-xl hover:shadow-lg transition-shadow duration-300"
                   >
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <IconComponent className="w-8 h-8 text-green-600" />
+                    <div className="w-16 h-16 bg-[#0d9488]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="w-8 h-8 text-[#0d9488]" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{asset.altAr}</h3>
                     <p className="text-gray-600 text-sm">{asset.textAr}</p>
@@ -527,8 +542,8 @@ const Home = () => {
                   key={index}
                   className="text-center p-6 bg-white rounded-xl hover:shadow-lg transition-shadow duration-300"
                 >
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Leaf className="w-8 h-8 text-green-600" />
+                  <div className="w-16 h-16 bg-[#0d9488]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Leaf className="w-8 h-8 text-[#0d9488]" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">{reason.title}</h3>
                   <p className="text-gray-600 text-sm">{reason.description}</p>
@@ -540,7 +555,7 @@ const Home = () => {
           <div className="text-center">
             <Link
               href="/about"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105"
+              className="bg-[#0d9488] hover:bg-[#0f766e] text-white px-8 py-3 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
               تعرف علينا أكثر
             </Link>
@@ -575,16 +590,16 @@ const Home = () => {
             <div className="p-6 bg-gray-50">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                 <div>
-                  <MapPin className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <MapPin className="w-8 h-8 text-[#0d9488] mx-auto mb-2" />
                   <h3 className="font-semibold text-gray-900 mb-1">نخدم جميع أنحاء الرياض</h3>
                 </div>
                 <div>
-                  <Phone className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <Phone className="w-8 h-8 text-[#0d9488] mx-auto mb-2" />
                   <h3 className="font-semibold text-gray-900 mb-1">اتصل بنا الآن</h3>
                   <p className="text-gray-600 text-sm">+966 53 430 9221</p>
                 </div>
                 <div>
-                  <MessageCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <MessageCircle className="w-8 h-8 text-[#0d9488] mx-auto mb-2" />
                   <h3 className="font-semibold text-gray-900 mb-1">واتساب</h3>
                   <p className="text-gray-600 text-sm">تواصل سريع ومباشر</p>
                 </div>
@@ -595,30 +610,30 @@ const Home = () => {
       </section>
 
       {/* Quick Contact */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-green-700">
+      <section className="py-24 bg-gradient-to-r from-[#0d9488] to-[#115e59]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">جاهز لتحويل حديقتك؟</h2>
-          <p className="text-xl text-green-100 mb-8">
+          <h2 className="text-4xl font-bold text-white mb-6">جاهز لتحويل حديقتك؟</h2>
+          <p className="text-xl text-green-100 mb-10 opacity-90">
             تواصل معنا اليوم واحصل على استشارة مجانية
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:+966534309221"
-              className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105 flex items-center justify-center"
+              className="bg-white text-[#0d9488] hover:bg-gray-100 px-8 py-4 rounded-xl font-bold transition-all duration-200 transform hover:scale-105 flex items-center justify-center shadow-lg"
             >
               <Phone className="w-5 h-5 ml-2" />
               اتصل الآن
             </a>
             <a
               href="https://wa.me/966534309221"
-              className="bg-green-500 hover:bg-green-400 text-white px-8 py-4 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105 flex items-center justify-center"
+              className="bg-[#25D366] hover:bg-[#128C7E] text-white px-8 py-4 rounded-xl font-bold transition-all duration-200 transform hover:scale-105 flex items-center justify-center shadow-lg"
             >
               <MessageCircle className="w-5 h-5 ml-2" />
               واتساب
             </a>
             <Link
               href="/contact"
-              className="bg-transparent border-2 border-white hover:bg-white hover:text-green-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105"
+              className="bg-transparent border-2 border-white hover:bg-white hover:text-[#0d9488] text-white px-8 py-4 rounded-xl font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
               تواصل معنا
             </Link>
