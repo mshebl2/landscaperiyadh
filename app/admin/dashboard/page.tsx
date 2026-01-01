@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Monitor } from 'lucide-react';
 
 interface Project {
   _id: string;
@@ -85,6 +86,17 @@ interface Blog {
   image: string;
   author: string;
   featured: boolean;
+}
+
+interface HomeSlide {
+  _id: string;
+  title: string;
+  titleAr: string;
+  subtitle: string;
+  subtitleAr: string;
+  image: string;
+  order: number;
+  isActive: boolean;
 }
 
 
@@ -446,16 +458,98 @@ function PageAssetsSection({
     </div>
   );
 }
+
+function HomeSlidesSection({
+  slides,
+  onEdit,
+  onDelete,
+  onAddNew,
+}: {
+  slides: HomeSlide[];
+  onEdit: (slide: any) => void;
+  onDelete: (id: string) => void;
+  onAddNew: () => void;
+}) {
+  const { t } = useLanguage();
+  return (
+    <div className="space-y-3">
+      <AnimatePresence mode="popLayout">
+        {slides.map((slide, index) => (
+          <motion.div
+            key={slide._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, delay: index * 0.03 }}
+            whileHover={{ y: -2, transition: { duration: 0.2 } }}
+            className="group bg-gradient-to-r from-gray-900/50 to-gray-900/30 rounded-xl p-4 border border-white/10 hover:border-[#FFDD00]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-200 shadow-lg hover:shadow-xl hover:shadow-[#FFDD00]/10"
+          >
+            <div className="flex-1 min-w-0 flex gap-4">
+              <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 border border-white/10">
+                <img
+                  src={slide.image && !slide.image.startsWith('/') && !slide.image.startsWith('http') ? `/api/images/${slide.image}` : (slide.image || '/placeholder.jpg')}
+                  alt={slide.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="font-semibold text-white truncate group-hover:text-[#FFDD00] transition-colors">
+                    {slide.title}
+                  </h3>
+                  {!slide.isActive && (
+                    <span className="text-xs bg-red-500/20 text-red-500 px-2 py-0.5 rounded-full font-bold">Inactive</span>
+                  )}
+                  <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">Order: {slide.order}</span>
+                </div>
+                <p className="text-white/70 text-sm line-clamp-2">{slide.subtitle}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <RippleButton
+                onClick={() => onEdit(slide)}
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg text-sm font-medium hover:from-blue-500 hover:to-blue-400 transition-all duration-200 shadow-md hover:shadow-lg min-w-[70px]"
+              >
+                {t('admin.edit')}
+              </RippleButton>
+              <RippleButton
+                onClick={() => onDelete(slide._id)}
+                className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg text-sm font-medium hover:from-red-500 hover:to-red-400 transition-all duration-200 shadow-md hover:shadow-lg min-w-[70px]"
+              >
+                {t('admin.delete')}
+              </RippleButton>
+            </div>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: slides.length * 0.03 }}
+        className="pt-4 border-t border-white/10"
+      >
+        <RippleButton
+          onClick={onAddNew}
+          className="w-full bg-gradient-to-r from-[#FFDD00] to-[#FFE640] text-black px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:shadow-[#FFDD00]/30 transition-all duration-200"
+        >
+          {t('admin.addNew')} Slide
+        </RippleButton>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'banners' | 'gallery' | 'page-assets' | 'blogs' | 'seo-config' | 'link-mappings'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'banners' | 'gallery' | 'page-assets' | 'home-slides' | 'blogs' | 'seo-config' | 'link-mappings'>('projects');
   const [projects, setProjects] = useState<Project[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [pageAssets, setPageAssets] = useState<PageAsset[]>([]);
+  const [homeSlides, setHomeSlides] = useState<HomeSlide[]>([]);
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [seoConfig, setSeoConfig] = useState<SEOConfig | null>(null);
@@ -506,13 +600,14 @@ export default function AdminDashboard() {
 
   const fetchAllData = async () => {
     try {
-      const [projectsRes, servicesRes, testimonialsRes, bannersRes, galleryRes, pageAssetsRes, blogsRes, seoRes, linksRes] = await Promise.all([
+      const [projectsRes, servicesRes, testimonialsRes, bannersRes, galleryRes, pageAssetsRes, homeSlidesRes, blogsRes, seoRes, linksRes] = await Promise.all([
         fetch('/api/projects', { headers: adminHeaders }),
         fetch('/api/services', { headers: adminHeaders }),
         fetch('/api/testimonials', { headers: adminHeaders }),
         fetch('/api/banners', { headers: adminHeaders }),
         fetch('/api/gallery', { headers: adminHeaders }),
         fetch('/api/page-assets', { headers: adminHeaders }),
+        fetch('/api/home-slides', { headers: adminHeaders }),
         fetch('/api/blogs', { headers: adminHeaders }),
         fetch('/api/seo-config', { headers: adminHeaders }),
         fetch('/api/link-mappings', { headers: adminHeaders }),
@@ -523,6 +618,7 @@ export default function AdminDashboard() {
       setBanners(await bannersRes.json());
       setGalleryImages(await galleryRes.json());
       setPageAssets(await pageAssetsRes.json());
+      setHomeSlides(await (await homeSlidesRes.json() as Promise<any>)); // Handling promise if needed, but fetch returns array directly usually. Wait, logic above used array index destructuring.
 
       setBlogs(await blogsRes.json());
       setSeoConfig(await seoRes.json());
@@ -645,6 +741,14 @@ export default function AdminDashboard() {
       initialData.categoryAr = '';
       initialData.year = '';
       initialData.link = '';
+    } else if (activeTab === 'home-slides') {
+      initialData.title = '';
+      initialData.titleAr = '';
+      initialData.subtitle = '';
+      initialData.subtitleAr = '';
+      initialData.image = '';
+      initialData.order = 0;
+      initialData.isActive = true;
     } else if (activeTab === 'services') {
       initialData.title = '';
       initialData.titleAr = '';
@@ -770,6 +874,7 @@ export default function AdminDashboard() {
             { id: 'banners', label: t('admin.tabs.banners') },
             { id: 'gallery', label: t('admin.tabs.gallery') },
             { id: 'page-assets', label: 'Page Assets' }, // TODO: Add translation
+            { id: 'home-slides', label: 'Home Slides' },
 
 
             { id: 'blogs', label: 'Blogs' },
@@ -894,6 +999,15 @@ export default function AdminDashboard() {
 
             {activeTab === 'page-assets' && (
               <PageAssetsSection pageAssets={pageAssets} onUpdate={fetchAllData} showToast={showToast} />
+            )}
+
+            {activeTab === 'home-slides' && (
+              <HomeSlidesSection
+                slides={homeSlides}
+                onEdit={openEditForm}
+                onDelete={(id) => handleDelete('home-slides', id)}
+                onAddNew={openNewForm}
+              />
             )}
 
 
@@ -2715,6 +2829,58 @@ function FormModal({
                     />
                     <label htmlFor="caseSensitive" className="text-white">Case Sensitive</label>
                   </div>
+                </div>
+              </>
+            )
+          }
+
+          {
+            type === 'home-slides' && (
+              <>
+                <FormInput
+                  label={t('admin.form.title')}
+                  value={data.title || ''}
+                  onChange={(value) => updateField('title', value)}
+                  required
+                />
+                <FormInput
+                  label={t('admin.form.titleAr')}
+                  value={data.titleAr || ''}
+                  onChange={(value) => updateField('titleAr', value)}
+                  required
+                />
+                <FormInput
+                  label="Subtitle"
+                  value={data.subtitle || ''}
+                  onChange={(value) => updateField('subtitle', value)}
+                  required
+                />
+                <FormInput
+                  label="Subtitle (Arabic)"
+                  value={data.subtitleAr || ''}
+                  onChange={(value) => updateField('subtitleAr', value)}
+                  required
+                />
+                <ImageUploadField
+                  label={t('admin.form.image')}
+                  value={data.image || ''}
+                  onChange={(fileId) => updateField('image', fileId)}
+                />
+                <FormInput
+                  label="Order"
+                  type="number"
+                  value={data.order || 0}
+                  onChange={(value) => updateField('order', parseInt(value))}
+                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    checked={data.isActive !== false}
+                    onChange={(e) => updateField('isActive', e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500"
+                  />
+                  <label htmlFor="isActive" className="text-white">Active</label>
                 </div>
               </>
             )
