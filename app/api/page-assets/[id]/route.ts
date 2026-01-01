@@ -3,14 +3,14 @@ import PageAsset from '@/models/PageAsset';
 import connectToDatabase from '@/lib/mongodb';
 
 interface RouteParams {
-    params: {
+    params: Promise<{
         id: string;
-    }
+    }>
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
         await connectToDatabase();
 
@@ -33,7 +33,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
 export async function DELETE(request: Request, { params }: RouteParams) {
     try {
-        const { id } = params;
+        const { id } = await params;
         await connectToDatabase();
 
         const deletedAsset = await PageAsset.findByIdAndDelete(id);
