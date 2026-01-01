@@ -934,7 +934,7 @@ export default function AdminDashboard() {
             { id: 'services', label: 'الخدمات' },
             { id: 'testimonials', label: 'آراء العملاء' },
             { id: 'banners', label: 'البنرات' },
-            { id: 'gallery', label: 'معرض الصور' },
+            // { id: 'gallery', label: 'معرض الصور' }, // Hidden - not needed
             { id: 'page-assets', label: 'محتوى الصفحات' },
             { id: 'home-slides', label: 'شرائح الرئيسية' },
             { id: 'blogs', label: 'المدونة' },

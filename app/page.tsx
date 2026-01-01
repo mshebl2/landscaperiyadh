@@ -265,7 +265,8 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/services"
-              className="bg-[#0d9488] hover:bg-[#0f766e] text-white px-8 py-4 rounded-xl text-lg font-bold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#0d9488]/40 ring-4 ring-transparent hover:ring-[#0d9488]/20"
+              className="bg-[#0d9488] hover:bg-[#0f766e] text-white px-8 py-4 rounded-xl text-lg font-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#0d9488]/40 ring-4 ring-transparent hover:ring-[#0d9488]/20"
+              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
             >
               اكتشف خدماتنا
             </Link>
@@ -279,7 +280,7 @@ const Home = () => {
         </div>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2 space-x-reverse z-20">
+        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex space-x-2 space-x-reverse z-20">
           {slides.map((_, index) => (
             <button
               key={index}
@@ -290,7 +291,7 @@ const Home = () => {
           ))}
         </div>
 
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 animate-bounce">
           <ArrowDown className="w-8 h-8 text-white drop-shadow-lg" />
         </div>
       </section>
