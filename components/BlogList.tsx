@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { Search, Tag } from 'lucide-react';
 import { buildBlogPath } from '@/lib/site';
 
@@ -70,12 +69,12 @@ export default function BlogList({ initialBlogs }: BlogListProps) {
                                 <h3 className="text-3xl font-bold text-gray-900 mb-4">{featuredPost.title}</h3>
                                 <p className="text-gray-600 text-lg leading-relaxed mb-6">{featuredPost.excerpt}</p>
 
-                                <Link
+                                <a
                                     href={buildBlogPath(featuredPost.slug)}
-                                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 inline-flex items-center"
+                                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 inline-flex items-center no-style"
                                 >
                                     اقرأ المقال كاملاً
-                                </Link>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -139,12 +138,12 @@ export default function BlogList({ initialBlogs }: BlogListProps) {
                                         </div>
                                     </div>
 
-                                    <Link
+                                    <a
                                         href={buildBlogPath(post.slug)}
-                                        className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
+                                        className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center no-style"
                                     >
                                         اقرأ المزيد
-                                    </Link>
+                                    </a>
                                 </div>
                             </article>
                         ))}
