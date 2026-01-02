@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, Tag } from 'lucide-react';
-import { buildBlogUrl } from '@/lib/site';
+import { buildBlogUrl, SITE_URL } from '@/lib/site';
 
 interface Blog {
     _id: string;
@@ -26,6 +26,12 @@ interface BlogListProps {
 export default function BlogList({ initialBlogs }: BlogListProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [blogs] = useState<Blog[]>(initialBlogs);
+    const [siteUrl, setSiteUrl] = useState(SITE_URL);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        setSiteUrl(window.location.origin.replace(/\/+$/g, ''));
+    }, []);
 
     const filteredPosts = blogs.filter((post) => {
         const matchesSearch =
@@ -71,7 +77,7 @@ export default function BlogList({ initialBlogs }: BlogListProps) {
                                 <p className="text-gray-600 text-lg leading-relaxed mb-6">{featuredPost.excerpt}</p>
 
                                 <Link
-                                    href={buildBlogUrl(featuredPost.slug)}
+                                    href={buildBlogUrl(featuredPost.slug, siteUrl)}
                                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 inline-flex items-center"
                                 >
                                     اقرأ المقال كاملاً
@@ -140,7 +146,7 @@ export default function BlogList({ initialBlogs }: BlogListProps) {
                                     </div>
 
                                     <Link
-                                        href={buildBlogUrl(post.slug)}
+                                        href={buildBlogUrl(post.slug, siteUrl)}
                                         className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
                                     >
                                         اقرأ المزيد

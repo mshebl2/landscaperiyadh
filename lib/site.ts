@@ -1,6 +1,6 @@
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://almohtaref-sa.com').replace(/\/+$/g, '');
 
-export function buildBlogUrl(slug: string): string {
+export function buildBlogUrl(slug: string, baseUrl: string = SITE_URL): string {
   const cleanSlug = slug.replace(/^\/+/, '');
   let normalizedSlug = cleanSlug;
   try {
@@ -8,5 +8,6 @@ export function buildBlogUrl(slug: string): string {
   } catch {
     normalizedSlug = cleanSlug;
   }
-  return `${SITE_URL}/blog/${encodeURIComponent(normalizedSlug)}`;
+  const normalizedBase = baseUrl.replace(/\/+$/g, '');
+  return `${normalizedBase}/blog/${encodeURIComponent(normalizedSlug)}`;
 }
