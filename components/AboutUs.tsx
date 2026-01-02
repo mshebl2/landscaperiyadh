@@ -64,11 +64,7 @@ export default function AboutUs() {
 
   const fetchBanner = async () => {
     try {
-      const res = await fetch('/api/banners?page=about', {
-        // Disable cache to always get fresh data
-        cache: 'no-store',
-        next: { revalidate: 0 }
-      });
+      const res = await fetch('/api/banners?page=about');
       if (!res.ok) {
         throw new Error(`Failed to fetch banner: ${res.status}`);
       }

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import HomeSlide from '@/models/HomeSlide';
-import { isAdminRequest } from '@/lib/cache';
+import {
+    CACHE_DURATIONS,
+    getCacheControlHeader,
+    invalidateHomeSlidesCache,
+    invalidateImageCache,
+    isAdminRequest,
+} from '@/lib/cache';
 
 export async function GET(request: NextRequest) {
     const isAdmin = isAdminRequest(request);
@@ -17,7 +23,10 @@ export async function GET(request: NextRequest) {
         const response = NextResponse.json(slides);
 
         if (!isAdmin) {
-            response.headers.set('Cache-Control', 'public, max-age=1800, stale-while-revalidate=3600');
+            response.headers.set(
+                'Cache-Control',
+                getCacheControlHeader(CACHE_DURATIONS.HOME_SLIDES)
+            );
         } else {
             response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
         }
@@ -34,6 +43,10 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const slide = await HomeSlide.create(body);
+        invalidateHomeSlidesCache();
+        if (slide.image) {
+            invalidateImageCache(slide.image);
+        }
         return NextResponse.json(slide, { status: 201 });
     } catch (error) {
         console.error('Error creating home slide:', error);

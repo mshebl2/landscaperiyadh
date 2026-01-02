@@ -8,6 +8,9 @@ export const CACHE_DURATIONS = {
   PROJECTS: 600, // 10 minutes in seconds
   SERVICES: 600, // 10 minutes in seconds
   IMAGES: 1800, // 30 minutes in seconds
+  PAGE_ASSETS: 600, // 10 minutes in seconds
+  HOME_SLIDES: 600, // 10 minutes in seconds
+  TESTIMONIALS: 300, // 5 minutes in seconds
 } as const;
 
 /**
@@ -19,6 +22,9 @@ export const CACHE_TAGS = {
   IMAGES: 'images',
   BANNERS: 'banners',
   GALLERY: 'gallery',
+  PAGE_ASSETS: 'page-assets',
+  HOME_SLIDES: 'home-slides',
+  TESTIMONIALS: 'testimonials',
 } as const;
 
 /**
@@ -41,7 +47,25 @@ export function invalidateServicesCache() {
  * Invalidate cache for a specific image
  */
 export function invalidateImageCache(imageId: string) {
-  revalidatePath(`/api/images/${imageId}`);
+  if (!imageId) {
+    return;
+  }
+
+  let path = imageId;
+
+  if (imageId.startsWith('http')) {
+    try {
+      path = new URL(imageId).pathname;
+    } catch {
+      path = imageId;
+    }
+  }
+
+  if (!path.startsWith('/')) {
+    path = `/api/images/${path}`;
+  }
+
+  revalidatePath(path);
 }
 
 /**
@@ -58,6 +82,30 @@ export function invalidateBannersCache() {
 export function invalidateGalleryCache() {
   revalidatePath('/api/gallery');
   revalidatePath('/api/gallery', 'page');
+}
+
+/**
+ * Invalidate cache for page assets
+ */
+export function invalidatePageAssetsCache() {
+  revalidatePath('/api/page-assets');
+  revalidatePath('/api/page-assets', 'page');
+}
+
+/**
+ * Invalidate cache for home slides
+ */
+export function invalidateHomeSlidesCache() {
+  revalidatePath('/api/home-slides');
+  revalidatePath('/api/home-slides', 'page');
+}
+
+/**
+ * Invalidate cache for testimonials
+ */
+export function invalidateTestimonialsCache() {
+  revalidatePath('/api/testimonials');
+  revalidatePath('/api/testimonials', 'page');
 }
 
 /**
@@ -93,4 +141,3 @@ export function isAdminRequest(request: NextRequest): boolean {
   
   return false;
 }
-

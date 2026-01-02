@@ -5,9 +5,10 @@ import Header from "@/components/land/Header";
 import Footer from "@/components/land/Footer";
 import FloatingContactButtons from "@/components/land/FloatingContactButtons";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.landscaperiyadh.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "لاندسكيب ماسترز بالرياض | تنسيق حدائق بالرياض وتصميم حدائق فاخرة – خصم 30%",
     template: "%s | لاندسكيب ماسترز بالرياض",
@@ -70,7 +71,7 @@ export const metadata: Metadata = {
     title: "لاندسكيب ماسترز بالرياض | أفضل شركة تنسيق حدائق بالرياض – خصم 30%",
     description:
       "تصميم وتنسيق حدائق بالرياض — جلسات خارجية، عشب صناعي، غرف زجاجية، شلالات ونوافير، بديل الخشب، تكسيات جدارية، ديكور حدائق فاخرة بالرياض. خصم 30% الآن!",
-    url: "https://www.landscaperiyadh.com/",
+    url: SITE_URL,
     siteName: "لاندسكيب ماسترز بالرياض",
     locale: "ar_SA",
     type: "website",
@@ -82,7 +83,7 @@ export const metadata: Metadata = {
       "تنسيق حدائق بالرياض | تصميم حدائق | عشب صناعي | جلسات خارجية | شلالات وديكور حدائق بالرياض. خصم 30%.",
   },
   alternates: {
-    canonical: "https://www.landscaperiyadh.com/",
+    canonical: SITE_URL,
   },
 };
 
@@ -109,7 +110,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
               name: "لاندسكيب ماسترز بالرياض",
-              url: "https://www.landscaperiyadh.com",
+              url: SITE_URL,
               telephone: "+966534309221",
               address: {
                 "@type": "PostalAddress",

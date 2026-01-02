@@ -5,6 +5,7 @@ import {
     Scissors, Umbrella, Wrench, Star, MapPin, MessageCircle, Loader2,
     LucideIcon
 } from 'lucide-react';
+import { PLACEHOLDER_KEYS, resolvePageAssetImage } from '@/lib/pageAssets';
 
 interface Service {
     _id: string;
@@ -49,6 +50,7 @@ const iconMap: Record<string, LucideIcon> = {
 const Services = () => {
     const [services, setServices] = useState<Service[]>([]);
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [servicePlaceholder, setServicePlaceholder] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -57,9 +59,10 @@ const Services = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [servicesRes, testimonialsRes] = await Promise.all([
+                const [servicesRes, testimonialsRes, placeholdersRes] = await Promise.all([
                     fetch('/api/services'),
-                    fetch('/api/testimonials')
+                    fetch('/api/testimonials'),
+                    fetch('/api/page-assets?page=global&section=placeholders')
                 ]);
 
                 if (!servicesRes.ok) {
@@ -75,6 +78,11 @@ const Services = () => {
                     setTestimonials(testimonialsData.filter((t: Testimonial) => t.approved));
                 }
 
+                if (placeholdersRes.ok) {
+                    const placeholders = await placeholdersRes.json();
+                    setServicePlaceholder(resolvePageAssetImage(placeholders, PLACEHOLDER_KEYS.service));
+                }
+
                 setError(null);
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -88,8 +96,8 @@ const Services = () => {
     }, []);
 
     // Helper function to get image URL (supports GridFS)
-    const getImageUrl = (imageId: string | undefined) => {
-        if (!imageId) return 'https://images.pexels.com/photos/1105019/pexels-photo-1105019.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop';
+    const getImageUrl = (imageId?: string | null) => {
+        if (!imageId) return '';
         // If it's already a URL, return as is
         if (imageId.startsWith('http://') || imageId.startsWith('https://') || imageId.startsWith('/')) {
             return imageId;
@@ -148,6 +156,7 @@ const Services = () => {
                 <div className="grid gap-8">
                     {services.map((service) => {
                         const IconComponent = getIconComponent(service.icon);
+                        const serviceImageSrc = getImageUrl(service.image) || servicePlaceholder || '';
 
                         return (
                             <div key={service._id} id={service._id} className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow">
@@ -175,15 +184,19 @@ const Services = () => {
                                             )}
 
                                             {/* Service Image */}
-                                            {service.image && (
+                                            {serviceImageSrc && (
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow">
                                                         <img
-                                                            src={getImageUrl(service.image)}
+                                                            src={serviceImageSrc}
                                                             alt={service.titleAr}
                                                             className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
                                                             onError={(e) => {
-                                                                (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1105019/pexels-photo-1105019.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop';
+                                                                if (!servicePlaceholder) {
+                                                                    return;
+                                                                }
+                                                                e.currentTarget.onerror = null;
+                                                                e.currentTarget.src = servicePlaceholder;
                                                             }}
                                                         />
                                                     </div>

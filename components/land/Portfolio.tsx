@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PLACEHOLDER_KEYS, resolvePageAssetImage } from '@/lib/pageAssets';
 
 interface Project {
   _id: string;
@@ -28,6 +29,7 @@ const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedImage, setSelectedImage] = useState<Project | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [projectPlaceholder, setProjectPlaceholder] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,12 +38,20 @@ const Portfolio = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/projects');
-        if (!response.ok) {
+        const [projectsRes, placeholdersRes] = await Promise.all([
+          fetch('/api/projects'),
+          fetch('/api/page-assets?page=global&section=placeholders'),
+        ]);
+        if (!projectsRes.ok) {
           throw new Error('Failed to fetch projects');
         }
-        const data = await response.json();
+        const data = await projectsRes.json();
         setProjects(data);
+
+        if (placeholdersRes.ok) {
+          const placeholders = await placeholdersRes.json();
+          setProjectPlaceholder(resolvePageAssetImage(placeholders, PLACEHOLDER_KEYS.portfolio));
+        }
         setError(null);
       } catch (err) {
         console.error('Error fetching projects:', err);
@@ -94,10 +104,10 @@ const Portfolio = () => {
   };
 
   // Helper function to get image URL (supports GridFS)
-  const getImageUrl = (imageId: string) => {
-    if (!imageId) return '/placeholder.jpg';
+  const getImageUrl = (imageId?: string | null) => {
+    if (!imageId) return '';
     // If it's already a URL, return as is
-    if (imageId.startsWith('http://') || imageId.startsWith('https://')) {
+    if (imageId.startsWith('http://') || imageId.startsWith('https://') || imageId.startsWith('/')) {
       return imageId;
     }
     // Otherwise, assume it's a GridFS ID
@@ -178,21 +188,31 @@ const Portfolio = () => {
 
         {/* Portfolio Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project) => {
+            const projectImageSrc = getImageUrl(project.image) || projectPlaceholder || '';
+            return (
             <div
               key={project._id}
               className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
               onClick={() => openModal(project)}
             >
               <div className="relative overflow-hidden">
-                <img
-                  src={getImageUrl(project.image)}
-                  alt={isRTL ? project.titleAr : project.title}
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/placeholder.jpg';
-                  }}
-                />
+                {projectImageSrc ? (
+                  <img
+                    src={projectImageSrc}
+                    alt={isRTL ? project.titleAr : project.title}
+                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                    onError={(e) => {
+                      if (!projectPlaceholder) {
+                        return;
+                      }
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = projectPlaceholder;
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-gray-200" />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className={`absolute bottom-4 ${isRTL ? 'right-4 left-4' : 'left-4 right-4'} text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
                   <h3 className="text-lg font-bold mb-1">
@@ -204,7 +224,8 @@ const Portfolio = () => {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Modal */}
@@ -232,14 +253,22 @@ const Portfolio = () => {
                 <ChevronRight className="w-8 h-8" />
               </button>
 
-              <img
-                src={getImageUrl(selectedImage.image)}
-                alt={isRTL ? selectedImage.titleAr : selectedImage.title}
-                className="max-w-full max-h-full object-contain rounded-lg"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/placeholder.jpg';
-                }}
-              />
+              {(getImageUrl(selectedImage.image) || projectPlaceholder) ? (
+                <img
+                  src={getImageUrl(selectedImage.image) || projectPlaceholder || ''}
+                  alt={isRTL ? selectedImage.titleAr : selectedImage.title}
+                  className="max-w-full max-h-full object-contain rounded-lg"
+                  onError={(e) => {
+                    if (!projectPlaceholder) {
+                      return;
+                    }
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = projectPlaceholder;
+                  }}
+                />
+              ) : (
+                <div className="w-[90vw] h-[60vh] bg-gray-200 rounded-lg" />
+              )}
 
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white p-6 rounded-b-lg">
                 <h3 className="text-2xl font-bold mb-2">

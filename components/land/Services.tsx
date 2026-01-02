@@ -16,6 +16,7 @@ import {
   LucideIcon
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PLACEHOLDER_KEYS, resolvePageAssetImage } from '@/lib/pageAssets';
 
 interface Service {
   _id: string;
@@ -51,6 +52,7 @@ const Services = () => {
   const isRTL = language === 'ar';
 
   const [services, setServices] = useState<Service[]>([]);
+  const [servicePlaceholder, setServicePlaceholder] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,12 +61,20 @@ const Services = () => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/services');
-        if (!response.ok) {
+        const [servicesRes, placeholdersRes] = await Promise.all([
+          fetch('/api/services'),
+          fetch('/api/page-assets?page=global&section=placeholders'),
+        ]);
+        if (!servicesRes.ok) {
           throw new Error('Failed to fetch services');
         }
-        const data = await response.json();
+        const data = await servicesRes.json();
         setServices(data);
+
+        if (placeholdersRes.ok) {
+          const placeholders = await placeholdersRes.json();
+          setServicePlaceholder(resolvePageAssetImage(placeholders, PLACEHOLDER_KEYS.service));
+        }
         setError(null);
       } catch (err) {
         console.error('Error fetching services:', err);
@@ -78,10 +88,10 @@ const Services = () => {
   }, [isRTL]);
 
   // Helper function to get image URL (supports GridFS)
-  const getImageUrl = (imageId: string | undefined) => {
-    if (!imageId) return 'https://images.pexels.com/photos/1105019/pexels-photo-1105019.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop';
+  const getImageUrl = (imageId?: string | null) => {
+    if (!imageId) return '';
     // If it's already a URL, return as is
-    if (imageId.startsWith('http://') || imageId.startsWith('https://')) {
+    if (imageId.startsWith('http://') || imageId.startsWith('https://') || imageId.startsWith('/')) {
       return imageId;
     }
     // Otherwise, assume it's a GridFS ID
@@ -149,20 +159,30 @@ const Services = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service) => (
-            <div
-              key={service._id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group"
-            >
+          {services.map((service) => {
+            const serviceImageSrc = getImageUrl(service.image) || servicePlaceholder || '';
+            return (
+              <div
+                key={service._id}
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group"
+              >
               <div className="relative overflow-hidden">
-                <img
-                  src={getImageUrl(service.image)}
-                  alt={isRTL ? service.titleAr : service.title}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1105019/pexels-photo-1105019.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop';
-                  }}
-                />
+                {serviceImageSrc ? (
+                  <img
+                    src={serviceImageSrc}
+                    alt={isRTL ? service.titleAr : service.title}
+                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    onError={(e) => {
+                      if (!servicePlaceholder) {
+                        return;
+                      }
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = servicePlaceholder;
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200" />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
@@ -204,8 +224,9 @@ const Services = () => {
                   </a>
                 </div>
               </div>
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

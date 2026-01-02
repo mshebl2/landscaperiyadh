@@ -3,6 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
 import BlogDetail from '@/components/BlogDetail';
 import { generateSEOMetadata } from '@/lib/seo-utils';
+import { buildBlogUrl } from '@/lib/site';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -77,6 +78,8 @@ export async function generateMetadata(
     const previousImages = (await parent).openGraph?.images || [];
     const ogImage = blog.image ? [blog.image] : previousImages;
 
+    const canonicalUrl = blog.manualSEO?.canonicalUrl || buildBlogUrl(blog.slug);
+
     return {
         title: `${title} | لاندسكيب ماسترز`,
         description: description,
@@ -85,12 +88,15 @@ export async function generateMetadata(
         openGraph: {
             title: title,
             description: description,
-            url: `https://land-masters.sa/blog/${blog.slug}`,
+            url: canonicalUrl,
             siteName: 'Landscape Masters',
             images: ogImage,
             type: 'article',
             publishedTime: blog.createdAt,
             modifiedTime: blog.updatedAt,
+        },
+        alternates: {
+            canonical: canonicalUrl,
         },
         twitter: {
             card: 'summary_large_image',

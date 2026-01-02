@@ -31,11 +31,7 @@ export default function Hero() {
 
   const fetchBanner = async () => {
     try {
-      const res = await fetch('/api/banners?page=home', {
-        // Disable cache to always get fresh data
-        cache: 'no-store',
-        next: { revalidate: 0 }
-      });
+      const res = await fetch('/api/banners?page=home');
       if (!res.ok) {
         throw new Error(`Failed to fetch banner: ${res.status}`);
       }
@@ -209,4 +205,3 @@ export default function Hero() {
     </section>
   );
 }
-

@@ -1,6 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import PageAsset from '@/models/PageAsset';
 import connectToDatabase from '@/lib/mongodb';
+import {
+    CACHE_DURATIONS,
+    getCacheControlHeader,
+    invalidateImageCache,
+    invalidatePageAssetsCache,
+    isAdminRequest,
+} from '@/lib/cache';
 
 interface RouteParams {
     params: Promise<{
@@ -8,7 +15,7 @@ interface RouteParams {
     }>
 }
 
-export async function PUT(request: Request, { params }: RouteParams) {
+export async function PUT(request: NextRequest, { params }: RouteParams) {
     try {
         const { id } = await params;
         const body = await request.json();
@@ -24,14 +31,29 @@ export async function PUT(request: Request, { params }: RouteParams) {
             return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
         }
 
-        return NextResponse.json(updatedAsset);
+        invalidatePageAssetsCache();
+        if (updatedAsset.imageUrl) {
+            invalidateImageCache(updatedAsset.imageUrl);
+        }
+
+        const response = NextResponse.json(updatedAsset);
+        if (isAdminRequest(request)) {
+            response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+        } else {
+            response.headers.set(
+                'Cache-Control',
+                getCacheControlHeader(CACHE_DURATIONS.PAGE_ASSETS)
+            );
+        }
+
+        return response;
     } catch (error) {
         console.error('Failed to update asset:', error);
         return NextResponse.json({ error: 'Failed to update asset' }, { status: 500 });
     }
 }
 
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
     try {
         const { id } = await params;
         await connectToDatabase();
@@ -42,7 +64,22 @@ export async function DELETE(request: Request, { params }: RouteParams) {
             return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
         }
 
-        return NextResponse.json({ message: 'Asset deleted successfully' });
+        invalidatePageAssetsCache();
+        if (deletedAsset.imageUrl) {
+            invalidateImageCache(deletedAsset.imageUrl);
+        }
+
+        const response = NextResponse.json({ message: 'Asset deleted successfully' });
+        if (isAdminRequest(request)) {
+            response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+        } else {
+            response.headers.set(
+                'Cache-Control',
+                getCacheControlHeader(CACHE_DURATIONS.PAGE_ASSETS)
+            );
+        }
+
+        return response;
     } catch (error) {
         console.error('Failed to delete asset:', error);
         return NextResponse.json({ error: 'Failed to delete asset' }, { status: 500 });

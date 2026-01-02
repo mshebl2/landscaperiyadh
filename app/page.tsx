@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowDown, Leaf, Phone, MessageCircle, MapPin, ChevronLeft, ChevronRight, Loader2, Users, Star, ShieldCheck, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { PLACEHOLDER_KEYS, resolvePageAssetImage } from '@/lib/pageAssets';
 
 interface HomeSlide {
   _id: string;
@@ -101,11 +102,13 @@ const Home = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [whyChooseUsAssets, setWhyChooseUsAssets] = useState<PageAsset[]>([]);
+  const [servicePlaceholder, setServicePlaceholder] = useState<string | null>(null);
+  const [portfolioPlaceholder, setPortfolioPlaceholder] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Helper function to get image URL (supports GridFS)
-  const getImageUrl = (imageId: string | undefined) => {
-    if (!imageId) return '/placeholder.jpg';
+  const getImageUrl = (imageId?: string | null) => {
+    if (!imageId) return '';
     // If it's already a URL or local path, return as is
     if (imageId.startsWith('http://') || imageId.startsWith('https://') || imageId.startsWith('/')) {
       return imageId;
@@ -121,11 +124,12 @@ const Home = () => {
         setLoading(true);
 
         // Fetch all data in parallel
-        const [slidesRes, servicesRes, projectsRes, whyChooseUsRes] = await Promise.all([
+        const [slidesRes, servicesRes, projectsRes, whyChooseUsRes, placeholdersRes] = await Promise.all([
           fetch('/api/home-slides?active=true').catch(() => null),
           fetch('/api/services?featured=true').catch(() => null),
           fetch('/api/projects?featured=true').catch(() => null),
-          fetch('/api/page-assets?page=home&section=why-choose-us').catch(() => null)
+          fetch('/api/page-assets?page=home&section=why-choose-us').catch(() => null),
+          fetch('/api/page-assets?page=global&section=placeholders').catch(() => null)
         ]);
 
         // Handle slides
@@ -151,6 +155,12 @@ const Home = () => {
         // Handle Why Choose Us assets
         if (whyChooseUsRes?.ok) {
           setWhyChooseUsAssets(await whyChooseUsRes.json());
+        }
+
+        if (placeholdersRes?.ok) {
+          const placeholders = await placeholdersRes.json();
+          setServicePlaceholder(resolvePageAssetImage(placeholders, PLACEHOLDER_KEYS.service));
+          setPortfolioPlaceholder(resolvePageAssetImage(placeholders, PLACEHOLDER_KEYS.portfolio));
         }
 
       } catch (error) {
@@ -312,24 +322,34 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {services.length > 0 ? (
-                services.map((service) => (
-                  <motion.div
-                    key={service._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100"
-                  >
+                services.map((service) => {
+                  const serviceImageSrc = getImageUrl(service.image) || servicePlaceholder || '';
+                  return (
+                    <motion.div
+                      key={service._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100"
+                    >
                     <div className="relative overflow-hidden h-64">
                       <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                      <img
-                        src={getImageUrl(service.image)}
-                        alt={service.titleAr}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1105019/pexels-photo-1105019.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop';
-                        }}
-                      />
+                      {serviceImageSrc ? (
+                        <img
+                          src={serviceImageSrc}
+                          alt={service.titleAr}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          onError={(e) => {
+                            if (!servicePlaceholder) {
+                              return;
+                            }
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = servicePlaceholder;
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200" />
+                      )}
                     </div>
 
                     <div className="p-8">
@@ -346,61 +366,10 @@ const Home = () => {
                       </Link>
                     </div>
                   </motion.div>
-                ))
+                  );
+                })
               ) : (
-                // Fallback static services if none in DB
-                <>
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100">
-                    <div className="relative overflow-hidden h-64">
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                      <img src="/11.jpg" alt="تصميم حدائق" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    </div>
-                    <div className="p-8">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0d9488] transition-colors">تصميم وتنسيق الحدائق الفاخرة</h3>
-                      <p className="text-gray-500 leading-relaxed mb-6">تصاميم مبتكرة وعصرية تحول مساحتك إلى واحة خضراء مبهرة باستخدام أحدث التقنيات</p>
-                      <Link href="/services" className="inline-flex items-center text-[#0d9488] hover:text-[#0f766e] font-bold transition-all duration-200 group-hover:gap-2">
-                        اطلب الخدمة
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </Link>
-                    </div>
-                  </motion.div>
-
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100">
-                    <div className="relative overflow-hidden h-64">
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                      <img src="/IMG-20250930-WA0102.jpg" alt="جلسات خارجية" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    </div>
-                    <div className="p-8">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0d9488] transition-colors">جلسات خارجية وغرف زجاجية</h3>
-                      <p className="text-gray-500 leading-relaxed mb-6">مساحات استرخاء فاخرة مع أثاث عصري وغرف زجاجية تمنحك إطلالة بانورامية</p>
-                      <Link href="/services" className="inline-flex items-center text-[#0d9488] hover:text-[#0f766e] font-bold transition-all duration-200 group-hover:gap-2">
-                        اطلب الخدمة
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </Link>
-                    </div>
-                  </motion.div>
-
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100">
-                    <div className="relative overflow-hidden h-64">
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                      <img src="/10.jpg" alt="شلالات ونوافير" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    </div>
-                    <div className="p-8">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0d9488] transition-colors">شلالات ونوافير فاخرة</h3>
-                      <p className="text-gray-500 leading-relaxed mb-6">عناصر مائية مذهلة تضيف لمسة من الفخامة والهدوء إلى حديقتك المنزلية</p>
-                      <Link href="/services" className="inline-flex items-center text-[#0d9488] hover:text-[#0f766e] font-bold transition-all duration-200 group-hover:gap-2">
-                        اطلب الخدمة
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </Link>
-                    </div>
-                  </motion.div>
-                </>
+                <div className="col-span-full text-center text-gray-500">No services available.</div>
               )}
             </div>
           )}
@@ -433,58 +402,40 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {projects.length > 0 ? (
-                projects.map((project) => (
-                  <div
-                    key={project._id}
-                    className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                  >
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={getImageUrl(project.image)}
-                        alt={project.titleAr}
-                        className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1105019/pexels-photo-1105019.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop';
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 className="text-lg font-bold">{project.titleAr}</h3>
+                projects.map((project) => {
+                  const projectImageSrc = getImageUrl(project.image) || portfolioPlaceholder || '';
+                  return (
+                    <div
+                      key={project._id}
+                      className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                    >
+                      <div className="relative overflow-hidden">
+                        {projectImageSrc ? (
+                          <img
+                            src={projectImageSrc}
+                            alt={project.titleAr}
+                            className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                          onError={(e) => {
+                            if (!portfolioPlaceholder) {
+                              return;
+                            }
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = portfolioPlaceholder;
+                          }}
+                          />
+                        ) : (
+                          <div className="w-full h-64 bg-gray-200" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <h3 className="text-lg font-bold">{project.titleAr}</h3>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
-                // Fallback static projects
-                <>
-                  <div className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div className="relative overflow-hidden">
-                      <img src="/IMG-20250930-WA0021.jpg" alt="حديقة فيلا فاخرة" className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 className="text-lg font-bold">حديقة فيلا فاخرة - الرياض</h3>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div className="relative overflow-hidden">
-                      <img src="/IMG-20250930-WA0083.jpg" alt="جلسة خارجية فاخرة" className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 className="text-lg font-bold">جلسة خارجية فاخرة</h3>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div className="relative overflow-hidden">
-                      <img src="/12.jpg" alt="شلال ثابت" className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 className="text-lg font-bold">شلال ثابت مع إضاءة</h3>
-                      </div>
-                    </div>
-                  </div>
-                </>
+                <div className="col-span-full text-center text-gray-500">No projects available.</div>
               )}
             </div>
           )}

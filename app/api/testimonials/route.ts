@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Testimonial from '@/models/Testimonial';
-import { isAdminRequest } from '@/lib/cache';
+import {
+  CACHE_DURATIONS,
+  getCacheControlHeader,
+  invalidateTestimonialsCache,
+  isAdminRequest,
+} from '@/lib/cache';
 
 export async function GET(request: NextRequest) {
   // Skip caching for admin requests
@@ -16,9 +21,13 @@ export async function GET(request: NextRequest) {
     
     const response = NextResponse.json(testimonials);
     
-    // No cache for admin requests
     if (isAdmin) {
       response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    } else {
+      response.headers.set(
+        'Cache-Control',
+        getCacheControlHeader(CACHE_DURATIONS.TESTIMONIALS)
+      );
     }
     
     return response;
@@ -32,9 +41,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const testimonial = await Testimonial.create(body);
+    invalidateTestimonialsCache();
     return NextResponse.json(testimonial, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create testimonial' }, { status: 500 });
   }
 }
-
