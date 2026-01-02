@@ -34,6 +34,7 @@ export default function BlogList({ initialBlogs }: BlogListProps) {
     });
 
     const featuredPost = blogs.find(blog => blog.featured) || blogs[0];
+    const getPostPath = (post: Blog) => buildBlogPath((post.slug || '').trim() || post._id);
 
     return (
         <div className="min-h-screen pt-20">
@@ -70,7 +71,7 @@ export default function BlogList({ initialBlogs }: BlogListProps) {
                                 <p className="text-gray-600 text-lg leading-relaxed mb-6">{featuredPost.excerpt}</p>
 
                                 <a
-                                    href={buildBlogPath(featuredPost.slug)}
+                                    href={getPostPath(featuredPost)}
                                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 inline-flex items-center no-style"
                                 >
                                     اقرأ المقال كاملاً
@@ -139,7 +140,7 @@ export default function BlogList({ initialBlogs }: BlogListProps) {
                                     </div>
 
                                     <a
-                                        href={buildBlogPath(post.slug)}
+                                        href={getPostPath(post)}
                                         className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center no-style"
                                     >
                                         اقرأ المزيد

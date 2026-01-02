@@ -44,6 +44,14 @@ async function getBlog(slug: string) {
             }
         }
 
+        const idCandidate = candidates.find((candidate) => /^[a-fA-F0-9]{24}$/.test(candidate));
+        if (idCandidate) {
+            const blog = await Blog.findById(idCandidate).lean();
+            if (blog) {
+                return JSON.parse(JSON.stringify(blog));
+            }
+        }
+
         return null;
     } catch (error) {
         console.error("Error in getBlog:", error);
