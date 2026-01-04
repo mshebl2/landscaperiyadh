@@ -2,9 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IHomeSlide extends Document {
     title: string;
-    titleAr: string;
     subtitle: string;
-    subtitleAr: string;
     image: string;
     order: number;
     isActive: boolean;
@@ -18,15 +16,7 @@ const HomeSlideSchema: Schema = new Schema(
             type: String,
             required: true,
         },
-        titleAr: {
-            type: String,
-            required: true,
-        },
         subtitle: {
-            type: String,
-            required: true,
-        },
-        subtitleAr: {
             type: String,
             required: true,
         },

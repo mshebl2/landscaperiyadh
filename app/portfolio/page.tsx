@@ -6,15 +6,11 @@ import { PLACEHOLDER_KEYS, resolvePageAssetImage } from '@/lib/pageAssets';
 interface Project {
     _id: string;
     title: string;
-    titleAr: string;
     description: string;
-    descriptionAr: string;
     category: string;
-    categoryAr: string;
     image: string;
     galleryImages?: string[];
     tags: string[];
-    tagsAr: string[];
     year: string;
     link?: string;
     featured: boolean;
@@ -103,10 +99,9 @@ const Portfolio = () => {
     const categories = [
         { id: 'all', name: 'جميع الأعمال' },
         ...Array.from(new Set(projects.map(p => p.category))).map(cat => {
-            const project = projects.find(p => p.category === cat);
             return {
                 id: cat,
-                name: project?.categoryAr || cat
+                name: cat
             };
         })
     ];
@@ -195,43 +190,43 @@ const Portfolio = () => {
                     {filteredProjects.map((project) => {
                         const projectImageSrc = getImageUrl(project.image) || projectPlaceholder || '';
                         return (
-                        <div
-                            key={project._id}
-                            className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                            onClick={() => openModal(project)}
-                        >
-                            <div className="relative overflow-hidden">
-                                {projectImageSrc ? (
-                                    <img
-                                        src={projectImageSrc}
-                                        alt={project.titleAr}
-                                        className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                                        onError={(e) => {
-                                            if (!projectPlaceholder) {
-                                                return;
-                                            }
-                                            e.currentTarget.onerror = null;
-                                            e.currentTarget.src = projectPlaceholder;
-                                        }}
-                                    />
-                                ) : (
-                                    <div className="w-full h-64 bg-gray-200" />
-                                )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <h3 className="text-lg font-bold mb-1">{project.titleAr}</h3>
-                                    <p className="text-sm text-gray-200">{project.categoryAr}</p>
+                            <div
+                                key={project._id}
+                                className="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                                onClick={() => openModal(project)}
+                            >
+                                <div className="relative overflow-hidden">
+                                    {projectImageSrc ? (
+                                        <img
+                                            src={projectImageSrc}
+                                            alt={project.title}
+                                            className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                                            onError={(e) => {
+                                                if (!projectPlaceholder) {
+                                                    return;
+                                                }
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = projectPlaceholder;
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="w-full h-64 bg-gray-200" />
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <h3 className="text-lg font-bold mb-1">{project.title}</h3>
+                                        <p className="text-sm text-gray-200">{project.category}</p>
+                                    </div>
+                                </div>
+                                <div className="p-6">
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">{project.title}</h3>
+                                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
+                                    <div className="flex justify-between text-sm text-gray-500">
+                                        <span>الفئة: {project.category}</span>
+                                        <span>السنة: {project.year}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="p-6">
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">{project.titleAr}</h3>
-                                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.descriptionAr}</p>
-                                <div className="flex justify-between text-sm text-gray-500">
-                                    <span>الفئة: {project.categoryAr}</span>
-                                    <span>السنة: {project.year}</span>
-                                </div>
-                            </div>
-                        </div>
                         );
                     })}
                 </div>
@@ -296,7 +291,7 @@ const Portfolio = () => {
                         {(getImageUrl(selectedImage.image) || projectPlaceholder) ? (
                             <img
                                 src={getImageUrl(selectedImage.image) || projectPlaceholder || ''}
-                                alt={selectedImage.titleAr}
+                                alt={selectedImage.title}
                                 className="max-w-full max-h-full object-contain rounded-lg"
                                 onError={(e) => {
                                     if (!projectPlaceholder) {
@@ -310,11 +305,11 @@ const Portfolio = () => {
                             <div className="w-[90vw] h-[60vh] bg-gray-200 rounded-lg" />
                         )}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white p-6 rounded-b-lg">
-                            <h3 className="text-2xl font-bold mb-2">{selectedImage.titleAr}</h3>
-                            <p className="text-gray-200 mb-4">{selectedImage.descriptionAr}</p>
-                            {selectedImage.tagsAr && selectedImage.tagsAr.length > 0 && (
+                            <h3 className="text-2xl font-bold mb-2">{selectedImage.title}</h3>
+                            <p className="text-gray-200 mb-4">{selectedImage.description}</p>
+                            {selectedImage.tags && selectedImage.tags.length > 0 && (
                                 <div className="flex flex-wrap gap-2">
-                                    {selectedImage.tagsAr.map((tag, idx) => (
+                                    {selectedImage.tags.map((tag, idx) => (
                                         <span key={idx} className="bg-green-600/80 px-3 py-1 rounded-full text-sm">
                                             {tag}
                                         </span>

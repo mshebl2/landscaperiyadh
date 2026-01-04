@@ -2,14 +2,8 @@ import mongoose, { Schema, Model } from "mongoose";
 
 export interface IBlog {
     title: string;
-    titleEn?: string;
-    titleAr?: string;
     content: string;
-    contentEn?: string;
-    contentAr?: string;
     excerpt: string;
-    excerptEn?: string;
-    excerptAr?: string;
     image: string;
     author: string;
     featured: boolean;
@@ -38,14 +32,8 @@ export interface IBlog {
 const BlogSchema = new Schema<IBlog>(
     {
         title: { type: String, required: true },
-        titleEn: { type: String },
-        titleAr: { type: String },
         content: { type: String, required: true },
-        contentEn: { type: String },
-        contentAr: { type: String },
         excerpt: { type: String },
-        excerptEn: { type: String },
-        excerptAr: { type: String },
         image: { type: String, required: true },
         author: { type: String, required: true },
         featured: { type: Boolean, default: false },

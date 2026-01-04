@@ -20,7 +20,7 @@ async function getBlogs() {
         let slug = typeof blog.slug === 'string' ? blog.slug.trim() : '';
 
         if (!slug) {
-            const titleSource = blog.title || blog.titleAr || blog.titleEn || '';
+            const titleSource = blog.title || '';
             const baseSlug = generateSlug(titleSource);
             const idString = blog._id?.toString?.() ?? String(blog._id);
             let uniqueSlug = baseSlug || `blog-${idString}`;

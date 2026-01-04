@@ -10,13 +10,10 @@ import { PLACEHOLDER_KEYS, resolvePageAssetImage } from '@/lib/pageAssets';
 interface Service {
     _id: string;
     title: string;
-    titleAr: string;
     description: string;
-    descriptionAr: string;
     icon: string;
     image?: string;
     features: string[];
-    featuresAr: string[];
     featured: boolean;
 }
 
@@ -169,12 +166,12 @@ const Services = () => {
                                         </div>
 
                                         <div className="flex-1">
-                                            <h2 className="text-2xl font-bold text-gray-800 mb-4">{service.titleAr}</h2>
-                                            <p className="text-gray-600 mb-6 leading-relaxed">{service.descriptionAr}</p>
+                                            <h2 className="text-2xl font-bold text-gray-800 mb-4">{service.title}</h2>
+                                            <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
 
-                                            {service.featuresAr && service.featuresAr.length > 0 && (
+                                            {service.features && service.features.length > 0 && (
                                                 <div className="grid md:grid-cols-2 gap-3 mb-6">
-                                                    {service.featuresAr.map((feature, index) => (
+                                                    {service.features.map((feature, index) => (
                                                         <div key={index} className="flex items-center gap-2">
                                                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                                                             <span className="text-gray-700">{feature}</span>
@@ -189,7 +186,7 @@ const Services = () => {
                                                     <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow">
                                                         <img
                                                             src={serviceImageSrc}
-                                                            alt={service.titleAr}
+                                                            alt={service.title}
                                                             className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
                                                             onError={(e) => {
                                                                 if (!servicePlaceholder) {

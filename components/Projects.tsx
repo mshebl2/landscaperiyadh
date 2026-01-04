@@ -6,39 +6,34 @@ import Image from 'next/image';
 import Link from 'next/link';
 import RotatingButton from '@/components/RotatingButton';
 import { getImageUrl } from '@/lib/imageUtils';
-import { useLanguage } from '@/contexts/LanguageContext';
 import SkeletonLoader from '@/components/SkeletonLoader';
 
 interface Project {
   _id: string;
   title: string;
-  titleAr: string;
   description: string;
-  descriptionAr: string;
   image: string;
   tags: string[];
-  tagsAr: string[];
   category: string;
-  categoryAr: string;
   year: string;
   link?: string;
   featured: boolean;
 }
 
-// Category keys mapped to database values
-const categoryMap: Record<string, { en: string; ar: string }> = {
-  drilling: { en: 'Drilling', ar: 'تخريم' },
-  cutting: { en: 'Cutting', ar: 'قص' },
-  repair: { en: 'Repair', ar: 'إصلاح' },
-  demolition: { en: 'Demolition', ar: 'هدم' },
-};
-
-const categoryKeys = ['all', 'drilling', 'cutting', 'repair', 'demolition'] as const;
-type CategoryKey = typeof categoryKeys[number];
+// Arabic category names for filtering
+const categories = [
+  { id: 'all', name: 'الكل' },
+  { id: 'تصميم حدائق', name: 'تصميم حدائق' },
+  { id: 'ثيل طبيعي', name: 'ثيل طبيعي' },
+  { id: 'عشب صناعي', name: 'عشب صناعي' },
+  { id: 'شبكات ري', name: 'شبكات ري' },
+  { id: 'شلالات ونوافير', name: 'شلالات ونوافير' },
+  { id: 'مظلات وسواتر', name: 'مظلات وسواتر' },
+] as const;
+type CategoryId = typeof categories[number]['id'];
 
 export default function Projects() {
-  const { t, language } = useLanguage();
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,16 +58,8 @@ export default function Projects() {
     if (selectedCategory === 'all') {
       return projects;
     }
-    
-    const categoryMapping = categoryMap[selectedCategory];
-    if (!categoryMapping) return projects;
-    
-    // Compare with the appropriate field based on language
-    const categoryValue = language === 'ar' ? categoryMapping.ar : categoryMapping.en;
-    const categoryField = language === 'ar' ? 'categoryAr' : 'category';
-    
-    return projects.filter((project) => project[categoryField as keyof Project] === categoryValue);
-  }, [selectedCategory, projects, language]);
+    return projects.filter((project) => project.category === selectedCategory);
+  }, [selectedCategory, projects]);
 
   return (
     <main className="min-h-screen bg-black text-white pt-20">
@@ -88,19 +75,19 @@ export default function Projects() {
           >
             <div className="w-12 h-px bg-white/80 mb-4" />
             <h4 className="text-sm md:text-base font-semibold text-white/85 uppercase tracking-wider mb-8">
-              {t('projects.ourLatestProjects')}
+              أحدث مشاريعنا
             </h4>
           </motion.div>
-          
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-[clamp(2rem,7vw,4.375rem)] font-bold mb-4 sm:mb-5 md:mb-6 text-overflow-safe"
           >
-            {t('projects.showcaseOfExcellence')}
+            معرض أعمالنا
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -108,7 +95,7 @@ export default function Projects() {
             className="text-base sm:text-lg text-white/85 max-w-[min(48rem,90vw)] text-overflow-safe"
             style={{ fontSize: 'clamp(1rem, 2.5vw, 1.125rem)' }}
           >
-            {t('projects.description')}
+            استعرض مجموعة من أفضل مشاريعنا المنفذة بأعلى معايير الجودة والإبداع
           </motion.p>
         </div>
       </section>
@@ -123,23 +110,23 @@ export default function Projects() {
             transition={{ duration: 0.6 }}
             className="flex flex-wrap justify-center gap-3"
           >
-            {categoryKeys.map((categoryKey) => (
+            {categories.map((category) => (
               <motion.div
-                key={categoryKey}
+                key={category.id}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
               >
                 <RotatingButton
-                  text={t(`projects.categories.${categoryKey}`)}
+                  text={category.name}
                   width={140}
                   height={48}
                   borderRadius={24}
                   fontSize={16}
                   fontWeight={600}
                   letterSpacing={0}
-                  isActive={selectedCategory === categoryKey}
-                  onClick={() => setSelectedCategory(categoryKey)}
+                  isActive={selectedCategory === category.id}
+                  onClick={() => setSelectedCategory(category.id)}
                   useGradient={true}
                 />
               </motion.div>
@@ -165,7 +152,7 @@ export default function Projects() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
-                    whileHover={{ 
+                    whileHover={{
                       y: -8,
                       scale: 1.02,
                       borderColor: 'rgba(255, 221, 0, 0.5)',
@@ -189,7 +176,7 @@ export default function Projects() {
                         />
                       </motion.div>
                       {/* Year Badge */}
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, scale: 0 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05 + 0.2 }}
@@ -202,22 +189,22 @@ export default function Projects() {
 
                     {/* Project Info */}
                     <div className="p-6 flex-1 flex flex-col">
-                      <motion.h3 
+                      <motion.h3
                         className="text-xl font-bold text-white mb-2 line-clamp-1 transition-colors duration-300"
                         whileHover={{ color: '#FFDD00' }}
                       >
-                        {language === 'ar' ? project.titleAr : project.title}
+                        {project.title}
                       </motion.h3>
                       <p className="text-sm text-white/85 mb-4 line-clamp-2 flex-1 leading-relaxed">
-                        {language === 'ar' ? project.descriptionAr : project.description}
+                        {project.description}
                       </p>
 
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {(language === 'ar' ? project.tagsAr : project.tags).map((tag, tagIndex) => (
+                        {project.tags.map((tag, tagIndex) => (
                           <motion.span
                             key={tagIndex}
-                            whileHover={{ 
+                            whileHover={{
                               scale: 1.1,
                               backgroundColor: 'rgba(255, 221, 0, 0.1)',
                               borderColor: 'rgba(255, 221, 0, 0.3)',
@@ -241,7 +228,7 @@ export default function Projects() {
                           href={`/projects/${project._id}`}
                           className="group w-full bg-[#FFDD00] hover:bg-[#e6c700] text-black px-6 py-3 rounded-xl font-semibold text-sm uppercase transition-all duration-200 flex items-center justify-center gap-2"
                         >
-                          <span>{t('projects.explore')}</span>
+                          <span>استكشف</span>
                           <motion.svg
                             width="16"
                             height="16"
@@ -269,13 +256,13 @@ export default function Projects() {
           ) : (
             <div className="text-center py-20">
               <p className="text-xl text-white/85 mb-6">
-                {t('projects.noProjectsFound')}
+                لا توجد مشاريع في هذه الفئة حالياً
               </p>
               <button
                 onClick={() => setSelectedCategory('all')}
                 className="bg-[#FFDD00] hover:bg-[#e6c700] text-black px-6 py-3 rounded-xl font-semibold uppercase transition-colors"
               >
-                {t('projects.viewAllProjects')}
+                عرض كل المشاريع
               </button>
             </div>
           )}

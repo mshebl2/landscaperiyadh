@@ -85,9 +85,7 @@ interface Blog {
 interface HomeSlide {
   _id: string;
   title: string;
-  titleAr: string;
   subtitle: string;
-  subtitleAr: string;
   image: string;
   order: number;
   isActive: boolean;
@@ -2611,7 +2609,7 @@ function FormModal({
       >
         <div className="flex justify-between items-start mb-6 gap-4">
           <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-[#FFDD00] to-[#FFE640] bg-clip-text text-transparent flex-1">
-            {data._id ? t('admin.form.edit') : t('admin.form.addNew')} {t(`admin.tabs.${type.slice(0, -1)}`)}
+            {data._id ? 'تعديل' : 'إضافة جديد'}
           </h2>
           <motion.button
             whileHover={{ rotate: 90, scale: 1.1 }}
@@ -2705,97 +2703,39 @@ function FormModal({
           {type === 'blogs' && (
             <>
               <FormInput
-                label="Default Title (Required)"
+                label="عنوان المقال"
                 value={data.title || ''}
                 onChange={(value) => updateField('title', value)}
+                required
               />
-
-              {/* English Content */}
-              <div className="border-t border-white/10 pt-4 mt-4">
-                <h3 className="text-lg font-semibold text-[#FFDD00] mb-4">English Content</h3>
-                <FormInput
-                  label="English Title"
-                  value={data.titleEn || ''}
-                  onChange={(value) => updateField('titleEn', value)}
+              <div>
+                <label className="block text-sm text-white/70 mb-2">مقتطف المقال</label>
+                <textarea
+                  value={data.excerpt || ''}
+                  onChange={(e) => updateField('excerpt', e.target.value)}
+                  rows={2}
+                  className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200"
+                  placeholder="وصف مختصر للمقال..."
                 />
-                <div className="mt-4">
-                  <label className="block text-sm text-white/70 mb-2">English Excerpt</label>
-                  <textarea
-                    value={data.excerptEn || ''}
-                    onChange={(e) => updateField('excerptEn', e.target.value)}
-                    rows={2}
-                    className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200"
-                  />
-                </div>
-                <div className="mt-4">
-                  <label className="block text-sm text-white/70 mb-2">English Content (HTML allowed)</label>
-                  <textarea
-                    value={data.contentEn || ''}
-                    onChange={(e) => updateField('contentEn', e.target.value)}
-                    rows={8}
-                    className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200 font-mono text-sm"
-                  />
-                </div>
               </div>
-
-              {/* Arabic Content */}
-              <div className="border-t border-white/10 pt-4 mt-4">
-                <h3 className="text-lg font-semibold text-[#FFDD00] mb-4">Arabic Content</h3>
-                <FormInput
-                  label="Arabic Title"
-                  value={data.titleAr || ''}
-                  onChange={(value) => updateField('titleAr', value)}
+              <div>
+                <label className="block text-sm text-white/70 mb-2">محتوى المقال (يدعم HTML)</label>
+                <textarea
+                  value={data.content || ''}
+                  onChange={(e) => updateField('content', e.target.value)}
+                  rows={10}
+                  className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200 font-mono text-sm"
+                  required
                 />
-                <div className="mt-4">
-                  <label className="block text-sm text-white/70 mb-2">Arabic Excerpt</label>
-                  <textarea
-                    value={data.excerptAr || ''}
-                    onChange={(e) => updateField('excerptAr', e.target.value)}
-                    rows={2}
-                    className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200"
-                  />
-                </div>
-                <div className="mt-4">
-                  <label className="block text-sm text-white/70 mb-2">Arabic Content (HTML allowed)</label>
-                  <textarea
-                    value={data.contentAr || ''}
-                    onChange={(e) => updateField('contentAr', e.target.value)}
-                    rows={8}
-                    className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200 font-mono text-sm"
-                  />
-                </div>
               </div>
-
-              {/* Fallback Content */}
-              <div className="border-t border-white/10 pt-4 mt-4 mb-4">
-                <h3 className="text-lg font-semibold text-gray-400 mb-4">Fallback Content</h3>
-                <div>
-                  <label className="block text-sm text-white/70 mb-2">Excerpt</label>
-                  <textarea
-                    value={data.excerpt || ''}
-                    onChange={(e) => updateField('excerpt', e.target.value)}
-                    rows={2}
-                    className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200"
-                  />
-                </div>
-                <div className="mt-4">
-                  <label className="block text-sm text-white/70 mb-2">Content (HTML allowed)</label>
-                  <textarea
-                    value={data.content || ''}
-                    onChange={(e) => updateField('content', e.target.value)}
-                    rows={8}
-                    className="w-full bg-gray-800/50 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFDD00] focus:shadow-lg focus:shadow-[#FFDD00]/20 transition-all duration-200 font-mono text-sm"
-                  />
-                </div>
-              </div>
-
               <FormInput
-                label="Author"
+                label="الكاتب"
                 value={data.author || ''}
                 onChange={(value) => updateField('author', value)}
+                required
               />
               <ImageUploadField
-                label="Cover Image"
+                label="صورة الغلاف"
                 value={data.image || ''}
                 onChange={(fileId) => updateField('image', fileId)}
               />
@@ -2807,7 +2747,7 @@ function FormModal({
                   onChange={(e) => updateField('featured', e.target.checked)}
                   className="w-4 h-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500"
                 />
-                <label htmlFor="featured" className="text-white">Featured Post</label>
+                <label htmlFor="featured" className="text-white">مقال مميز</label>
               </div>
               <div className="border-t border-white/10 pt-4 mt-4">
                 <h3 className="text-lg font-semibold text-[#FFDD00] mb-4">SEO Settings</h3>
@@ -2987,36 +2927,24 @@ function FormModal({
             type === 'home-slides' && (
               <>
                 <FormInput
-                  label={t('admin.form.title')}
+                  label="العنوان"
                   value={data.title || ''}
                   onChange={(value) => updateField('title', value)}
                   required
                 />
                 <FormInput
-                  label={t('admin.form.titleAr')}
-                  value={data.titleAr || ''}
-                  onChange={(value) => updateField('titleAr', value)}
-                  required
-                />
-                <FormInput
-                  label="Subtitle"
+                  label="العنوان الفرعي"
                   value={data.subtitle || ''}
                   onChange={(value) => updateField('subtitle', value)}
                   required
                 />
-                <FormInput
-                  label="Subtitle (Arabic)"
-                  value={data.subtitleAr || ''}
-                  onChange={(value) => updateField('subtitleAr', value)}
-                  required
-                />
                 <ImageUploadField
-                  label={t('admin.form.image')}
+                  label="الصورة"
                   value={data.image || ''}
                   onChange={(fileId) => updateField('image', fileId)}
                 />
                 <FormInput
-                  label="Order"
+                  label="الترتيب"
                   type="number"
                   value={data.order || 0}
                   onChange={(value) => updateField('order', parseInt(value))}
@@ -3029,7 +2957,7 @@ function FormModal({
                     onChange={(e) => updateField('isActive', e.target.checked)}
                     className="w-4 h-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500"
                   />
-                  <label htmlFor="isActive" className="text-white">Active</label>
+                  <label htmlFor="isActive" className="text-white">نشط</label>
                 </div>
               </>
             )
@@ -3042,13 +2970,13 @@ function FormModal({
             onClick={onSave}
             className="flex-1 bg-gradient-to-r from-[#FFDD00] to-[#FFE640] text-black px-6 py-3 rounded-xl font-semibold hover:from-[#FFE640] hover:to-[#FFDD00] transition-all duration-200 shadow-lg hover:shadow-xl"
           >
-            {t('admin.save')}
+            حفظ
           </RippleButton>
           <RippleButton
             onClick={onClose}
             className="flex-1 bg-gradient-to-r from-gray-700 to-gray-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-gray-600 hover:to-gray-500 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
-            {t('admin.cancel')}
+            إلغاء
           </RippleButton>
         </div>
       </motion.div>
