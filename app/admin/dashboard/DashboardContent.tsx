@@ -24,6 +24,7 @@ interface Service {
   title: string;
   description: string;
   icon: string;
+  image?: string;
   features: string[];
   featured: boolean;
 }
@@ -807,7 +808,9 @@ export default function AdminDashboard() {
       initialData.titleAr = '';
       initialData.description = '';
       initialData.descriptionAr = '';
+
       initialData.icon = '';
+      initialData.image = '';
     } else if (activeTab === 'blogs') {
       initialData.title = '';
       initialData.excerpt = '';
@@ -1240,13 +1243,24 @@ function ServicesSection({
             whileHover={{ y: -2, transition: { duration: 0.2 } }}
             className="group bg-gradient-to-r from-gray-900/50 to-gray-900/30 rounded-xl p-4 border border-white/10 hover:border-[#FFDD00]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-200 shadow-lg hover:shadow-xl hover:shadow-[#FFDD00]/10"
           >
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="font-semibold text-white truncate group-hover:text-[#FFDD00] transition-colors">
-                  {service.title}
-                </h3>
+            <div className="flex-1 min-w-0 flex gap-4">
+              {service.image && (
+                <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border border-white/10">
+                  <img
+                    src={service.image.startsWith('/') || service.image.startsWith('http') ? service.image : `/api/images/${service.image}`}
+                    alt={service.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="font-semibold text-white truncate group-hover:text-[#FFDD00] transition-colors">
+                    {service.title}
+                  </h3>
+                </div>
+                <p className="text-white/70 text-sm line-clamp-1">{service.description}</p>
               </div>
-              <p className="text-white/70 text-sm line-clamp-1">{service.description}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <RippleButton
@@ -2688,6 +2702,11 @@ function FormModal({
                   required
                 />
               </div>
+              <ImageUploadField
+                label="صورة الخدمة"
+                value={data.image || ''}
+                onChange={(fileId) => updateField('image', fileId)}
+              />
               <IconSelector
                 value={data.icon || 'leaf'}
                 onChange={(value) => updateField('icon', value)}
