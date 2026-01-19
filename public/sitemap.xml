@@ -73,4 +73,12 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- مقال: شركة تنسيق حدائق غرب الرياض -->
+  <url>
+    <loc>https://www.landscaperiyadh.com/blog/%D8%B4%D8%B1%D9%83%D8%A9-%D8%AA%D9%86%D8%B3%D9%8A%D9%82-%D8%AD%D8%AF%D8%A7%D8%A6%D9%82-%D8%BA%D8%B1%D8%A8-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6</loc>
+    <lastmod>2025-10-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
 </urlset>
