@@ -11,14 +11,15 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
+// جلب المقالات وتحديث slug والمنطقة
 async function getBlogs() {
     await connectDB();
     const blogs = await Blog.find({}).sort({ createdAt: -1 }).lean();
     const normalizedBlogs = [];
 
     for (const blog of blogs) {
+        // توليد slug إذا لم يكن موجود
         let slug = typeof blog.slug === 'string' ? blog.slug.trim() : '';
-
         if (!slug) {
             const titleSource = blog.title || '';
             const baseSlug = generateSlug(titleSource);
@@ -35,7 +36,13 @@ async function getBlogs() {
             slug = uniqueSlug;
         }
 
-        normalizedBlogs.push({ ...blog, slug });
+        // التأكد من وجود المنطقة
+        const region = blog.region || 'الرياض';
+        if (!blog.region) {
+            await Blog.findByIdAndUpdate(blog._id, { region: 'الرياض' });
+        }
+
+        normalizedBlogs.push({ ...blog, slug, region });
     }
 
     return JSON.parse(JSON.stringify(normalizedBlogs));
