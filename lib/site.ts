@@ -1,4 +1,4 @@
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://almohtaref-sa.com').replace(/\/+$/g, '');
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.landscaperiyadh.com').replace(/\/+$/g, '');
 
 const normalizeSlug = (slug: string): string => {
   const cleanSlug = slug.replace(/^\/+/, '');
