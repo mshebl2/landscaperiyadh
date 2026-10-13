@@ -20,22 +20,18 @@ interface Project {
   featured: boolean;
 }
 
-// Arabic category names for filtering
-const categories = [
-  { id: 'all', name: 'الكل' },
-  { id: 'تصميم حدائق', name: 'تصميم حدائق' },
-  { id: 'ثيل طبيعي', name: 'ثيل طبيعي' },
-  { id: 'عشب صناعي', name: 'عشب صناعي' },
-  { id: 'شبكات ري', name: 'شبكات ري' },
-  { id: 'شلالات ونوافير', name: 'شلالات ونوافير' },
-  { id: 'مظلات وسواتر', name: 'مظلات وسواتر' },
-] as const;
-type CategoryId = typeof categories[number]['id'];
-
 export default function Projects() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const categories = useMemo(() => {
+    const uniqueCats = Array.from(new Set(projects.map(p => p.category).filter(Boolean)));
+    return [
+      { id: 'all', name: 'الكل' },
+      ...uniqueCats.map(cat => ({ id: cat, name: cat }))
+    ];
+  }, [projects]);
 
   useEffect(() => {
     fetchProjects();

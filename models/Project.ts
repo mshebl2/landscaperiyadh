@@ -2,7 +2,9 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IProject extends Document {
   title: string;
+  titleAr?: string;
   description: string;
+  descriptionAr?: string;
   image: string;
   galleryImages?: string[];
   tags: string[];
@@ -20,9 +22,15 @@ const ProjectSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    titleAr: {
+      type: String,
+    },
     description: {
       type: String,
       required: true,
+    },
+    descriptionAr: {
+      type: String,
     },
     image: {
       type: String,

@@ -413,7 +413,7 @@ const Home = () => {
                         {projectImageSrc ? (
                           <img
                             src={projectImageSrc}
-                            alt={project.titleAr}
+                            alt={project.titleAr || project.title}
                             className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
                             if (!portfolioPlaceholder) {
@@ -428,7 +428,7 @@ const Home = () => {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <h3 className="text-lg font-bold">{project.titleAr}</h3>
+                          <h3 className="text-lg font-bold">{project.titleAr || project.title}</h3>
                         </div>
                       </div>
                     </div>
